@@ -59,13 +59,8 @@ export { ResumeOptions };
 export interface iUserResume {
   name: string;
   gender: string | null;
-  age: number | null;
   img: string;
-  dbo: {
-    day: string;
-    month: string;
-    year: string;
-  } | null;
+  dob: string;
   contact: Array<{ name: string; value: string; type: string; preferred?: boolean | null }>;
   city: string | null;
   move: boolean | null;

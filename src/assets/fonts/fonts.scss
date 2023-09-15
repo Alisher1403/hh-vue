@@ -4,8 +4,18 @@
 }
 
 @font-face {
+  font-family: "NotoSans-Light-Italic";
+  src: url(./NotoSans-LightItalic.ttf);
+}
+
+@font-face {
   font-family: "NotoSans-Regular";
   src: url(./NotoSans-Regular.ttf);
+}
+
+@font-face {
+  font-family: "NotoSans-Regular-Italic";
+  src: url(./NotoSans-Italic.ttf);
 }
 
 @font-face {
@@ -14,6 +24,26 @@
 }
 
 @font-face {
+  font-family: "NotoSans-Medium-Italic";
+  src: url(./NotoSans-MediumItalic.ttf);
+}
+
+@font-face {
   font-family: "NotoSans-SemiBold";
   src: url(./NotoSans-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: "NotoSans-SemiBold-Italic";
+  src: url(./NotoSans-SemiBoldItalic.ttf);
+}
+
+@font-face {
+  font-family: "NotoSans-Bold";
+  src: url(./NotoSans-Bold.ttf);
+}
+
+@font-face {
+  font-family: "NotoSans-Bold-Italic";
+  src: url(./NotoSans-BoldItalic.ttf);
 }

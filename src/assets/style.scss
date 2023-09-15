@@ -31,14 +31,32 @@
   --link-color-hover: #307cbe;
   --title-color: rgb(71, 77, 71);
   --text-color: rgb(53, 71, 56);
+  --icon-color: rgb(53, 71, 56);
   --line-color: rgb(217, 217, 217);
   --line-color2: rgb(100, 100, 100);
   --border-color: rgb(166, 166, 166);
+  --btn-bg: rgb(39, 39, 39);
+  --btn-bg-hover: rgb(75, 75, 75);
+  --btn-bg-transition: 0.2s;
   --text-size: 15px;
   --font-light: "NotoSans-Light";
+  --font-light-italic: "NotoSans-Light-Italic";
   --font-regular: "NotoSans-Regular";
+  --font-regular-italic: "NotoSans-Regular-Italic";
   --font-medium: "NotoSans-Medium";
+  --font-medium-italic: "NotoSans-Medium-Italic";
   --font-semiBold: "NotoSans-SemiBold";
+  --font-semiBold-italic: "NotoSans-SemiBold-Italic";
+  --font-bold: "NotoSans-Bold";
+  --font-bold-italic: "NotoSans-Bold-Italic";
+}
+
+@mixin text() {
+  font-size: 15px;
+  font-family: var(--font-regular);
+  font-weight: normal;
+  color: var(--title-color);
+  line-height: 150%;
 }
 
 @mixin flex($justify, $align: flex-start, $gap: 0) {
@@ -182,5 +200,97 @@
 
   &:last-child {
     border: none;
+  }
+}
+
+/****************************************/
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @include text();
+
+  strong {
+    font-family: var(--font-bold);
+  }
+
+  i {
+    font-family: var(--font-regular-italic);
+
+    strong {
+      font-family: var(--font-bold-italic);
+    }
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-bold);
+
+  i {
+    font-family: var(--font-bold-italic);
+  }
+}
+
+h1 {
+  font-size: 30px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+h5 {
+  font-size: 12px;
+}
+
+h6 {
+  font-size: 10px;
+}
+
+/**************************************************************************/
+
+.ant-select {
+  * {
+    font-family: var(--font-regular) !important;
+    line-height: 100% !important;
+  }
+
+  .ant-select-selector {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    border-radius: 8px !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .ant-select-arrow {
+    svg {
+      fill: var(--border-color) !important;
+    }
+  }
+}
+
+.ant-picker {
+  border: 0.5px solid var(--border-color);
+
+  svg {
+    fill: var(--border-color);
   }
 }

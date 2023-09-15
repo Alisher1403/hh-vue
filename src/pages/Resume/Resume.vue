@@ -10,16 +10,53 @@
                         <div class="left">
                             <h1 class="user-name title">{{ user.name }}</h1>
 
-                            <div class="user-date">
-                                <span v-if="user.gender != ''">{{ user.gender == 'M' ? 'Мужчина' : user.gender == 'F' ?
-                                    'Женщина'
-                                    : null }}</span>,
-                                <span v-if="user.age">{{ user.age }} лет</span>,
-                                <span v-if="user.dbo">родился {{ user.dbo.day }} {{
-                                    months[user.langSelected][+user.dbo.month - 1] }} {{ user.dbo.year }}</span>
+                            <div class="user-date" v-if="!faqChange">
+                                <span v-if="user.gender != ''">{{ user.gender == 'M' ? 'Мужчина, ' : user.gender == 'F' ?
+                                    'Женщина, '
+                                    : null }}</span>
+                                <span>{{ calculatedDob }}
+                                    лет</span>,
+                                <span v-if="user.dob">родился
+                                    {{ dayjs(+user.dob).date() }}
+                                    {{ months.rus[dayjs(+user.dob).month()] }}
+                                    {{ dayjs(+user.dob).year() }}
+                                </span>
                             </div>
 
-                            <router-link to="" class="resume-editor-link">Редактировать</router-link>
+                            <!-- EDITING -->
+                            <div class="edit user-date-edit" v-if="faqChange">
+                                <a-select :options="[
+                                    {
+                                        value: null,
+                                        label: '...'
+                                    },
+                                    {
+                                        value: 'M',
+                                        label: 'Мужчина'
+                                    },
+                                    {
+                                        value: 'F',
+                                        label: 'Женщина'
+                                    },
+                                ]" v-model:value="genderData" style="width: 120px;">
+                                </a-select>
+
+                                <a-date-picker v-model:value="dobData" :format="'DD.MM.YYYY'" />
+                            </div>
+
+
+                            <!-- EDITING -->
+                            <button class="resume-editor-link" v-if="!faqChange"
+                                @click="faqChange = true">Редактировать</button>
+
+                            <div class="editor-btns align-start" v-if="faqChange">
+                                <button class="editor-btn" @click="() => {
+                                    user['gender'] = genderData; user['dob'] = `${dayjs(dobData).unix() * 1000}`, getAge();;
+                                    ; faqChange = false
+                                }">Сохранить</button>
+                                <button class="editor-btn" transparent
+                                    @click="() => { genderData = user['gender']; dobData = dayjs(dayjs(+user.dob), 'DD/MM/YYYY'); faqChange = false }">Отменить</button>
+                            </div>
                         </div>
 
                         <div class="right">
@@ -83,35 +120,58 @@
                         <div class="content">
                             <h2 class="title">Ключевые навыки</h2>
 
-                            <ul class="user-skills" v-if="!skillsChange">
+                            <ul class="user-skills" v-if="!skillsChange" v-memo="[skillsData]">
                                 <li class="skill" v-for="skill in user.skills" :key="skill">
-                                    <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]['icon']"></div>
-                                    <p class="skill-name text-block">{{ skillsIcons[skill.toLocaleLowerCase()]['name'] }}
+                                    <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
+                                    <p class="skill-name text-block">{{ skillsIcons[skill.toLocaleLowerCase()] ?
+                                        skillsIcons[skill.toLocaleLowerCase()].name : skill }}
                                     </p>
                                 </li>
                             </ul>
 
+                            <!-- EDITING -->
                             <a-select v-if="skillsChange" class="skills-select" style="width: 100%;" mode="tags"
-                                v-model:value="skillsSelect" focus="true">
+                                v-model:value="skillsData" autofocus v-memo="[skillsData]">
                                 <a-select-option class="user-portfolio-scoped-style" v-for="el in Object.keys(skillsIcons)"
-                                    :key="el" :value="el.toLocaleLowerCase()">
-                                    <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]['icon']"></div>
-                                    <p class="skill-name text-block">{{ skillsIcons[el.toLocaleLowerCase()]['name'] }}</p>
+                                    :key="el" :value="el.toLocaleLowerCase()" :getPopupContainer="antParentNode">
+                                    <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]?.icon"></div>
+                                    <p class="skill-name text-block">{{ skillsIcons[el.toLocaleLowerCase()]?.name }}</p>
                                 </a-select-option>
                             </a-select>
                         </div>
 
-                        <button class="resume-editor-link" @click="skillsChange = true">Редактировать</button>
+                        <button class="resume-editor-link" @click="skillsChange = true"
+                            v-if="!skillsChange">Редактировать</button>
+
+                        <div class="editor-btns" v-if="skillsChange">
+                            <button class="editor-btn"
+                                @click="() => { user['skills'] = skillsData; skillsChange = false }">Сохранить</button>
+                            <button class="editor-btn" transparent
+                                @click="() => { skillsData = user['skills'].map(el => el.toLocaleLowerCase()); skillsChange = false }">Отменить</button>
+                        </div>
                     </div>
 
                     <!------------------ SECTOR 6 ------------------->
                     <div class="resume-sector-6 sector">
                         <div class="content">
                             <div class="title">Обо мне</div>
-                            <div class="user-aboutMe" v-html="user.aboutMe"></div>
+                            <div class="user-aboutMe" v-html="user.aboutMe" v-if="!aboutMeChange"></div>
                         </div>
 
-                        <router-link to="" class="resume-editor-link">Редактировать</router-link>
+                        <div v-if="aboutMeChange">
+                            <ckeditor :editor="ClassicEditor" v-model="aboutMeData" v-memo="[aboutMeData]"></ckeditor>
+                        </div>
+
+                        <!-- EDITING -->
+                        <button class="resume-editor-link" v-if="!aboutMeChange"
+                            @click="aboutMeChange = true">Редактировать</button>
+
+                        <div class="editor-btns" v-if="aboutMeChange">
+                            <button class="editor-btn"
+                                @click="() => { user['aboutMe'] = aboutMeData; aboutMeChange = false }">Сохранить</button>
+                            <button class="editor-btn" transparent
+                                @click="() => { aboutMeData = user['aboutMe']; aboutMeChange = false }">Отменить</button>
+                        </div>
                     </div>
 
                     <hr class="break">
@@ -295,7 +355,8 @@
                     <div class="content">
                         <div class="header">
                             <div class="top">
-                                <a-select v-model:value="langOptionsValue" :options="langOptions"></a-select>
+                                <a-select v-model:value="langOptionsValue" :options="langOptions"
+                                    :getPopupContainer="antParentNode"></a-select>
                                 <div class="top-btns">
                                     <button data-title="Download" data-title-top v-html="icons.download"></button>
                                     <button data-title="Print" data-title-top v-html="icons.print"></button>
@@ -303,7 +364,8 @@
                                 </div>
                             </div>
                             <div class="tools-visibility">
-                                <a-select v-model:value="visiblityOptionsValue" :options="visiblityOptions"></a-select>
+                                <a-select v-model:value="visiblityOptionsValue" :options="visiblityOptions"
+                                    :getPopupContainer="antParentNode"></a-select>
                             </div>
                         </div>
 
@@ -338,12 +400,17 @@
     </div>
 </template>
 
+<!-- ============================================================================================================================ -->
+
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, watch } from "vue";
+import "./style.scss";
 import { ref } from "vue";
 import { months, ResumeOptions, iUserResume } from "@/data/interfaces";
 import type { SelectProps } from 'ant-design-vue';
 import { icons, skillsIcons } from "@/assets/icons";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import * as dayjs from 'dayjs'
 
 export default defineComponent({
     name: 'Resume',
@@ -351,13 +418,8 @@ export default defineComponent({
         const user: iUserResume = {
             name: 'Чинбердиев Алишер Акромович',
             gender: 'M',
-            age: 20,
-            img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1694184318&h=Ykz4Mv7JhZ1J3S9omSZJ5A',
-            dbo: {
-                day: '14',
-                month: '03',
-                year: '2003',
-            },
+            img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1694572856&h=E7td_zjiTfgT0gqyeFO6uw',
+            dob: '1047582000000',
             contact: [
                 { name: 'phone', value: '+998 (97) 777-31-91', type: 'tel:', preferred: false },
                 { name: 'gmail', value: 'alisherchinberdiyev1403@gmail.com', type: 'mailTo:', preferred: true },
@@ -375,8 +437,8 @@ export default defineComponent({
             skills: [
                 "HTML",
                 "CSS3",
-                "JavaScript",
-                "TypeScript",
+                "JavaScript-js",
+                "TypeScript-ts",
                 "Sass",
                 "Git",
                 "Vue",
@@ -387,7 +449,7 @@ export default defineComponent({
                 "C++",
                 "Redux",
                 "Vuex",
-                "react-router-dom",
+                "react-router-dom react router",
                 "Java",
                 "Kotlin",
                 "Swift",
@@ -480,10 +542,25 @@ export default defineComponent({
             portfolioCheckout.value = portfolio;
         }
 
-        const skillsSelect = ref<Array<string>>([...user.skills].map(el => el.toLocaleLowerCase()));
-        console.log(skillsSelect.value);
+        const genderData = ref<string | null>(user.gender);
+        const dobData = ref<dayjs.Dayjs | null>(dayjs(dayjs(+user.dob), 'DD/MM/YYYY'));
+        const calculatedDob = ref<number>();
 
+        const faqChange = ref<boolean>(false);
+
+        const skillsData = ref<Array<string>>([...user.skills].map(el => el.toLocaleLowerCase()));
         const skillsChange = ref<boolean>(false);
+
+        const aboutMeData = ref<string>(user.aboutMe);
+        const aboutMeChange = ref<boolean>(false);
+
+        const antParentNode = (trigger: any): void => trigger.parentNode;
+
+        watch(faqChange, (dat) => {
+            if (!faqChange.value) {
+                console.log(dat);
+            }
+        })
 
         return {
             user,
@@ -498,874 +575,28 @@ export default defineComponent({
             completed,
             portfolioCheckout,
             portfolioDialog,
-            skillsSelect,
+            genderData,
+            dobData,
+            calculatedDob,
+            faqChange,
+            skillsData,
             skillsChange,
+            ClassicEditor,
+            aboutMeData,
+            aboutMeChange,
+            antParentNode,
+            dayjs,
+        }
+    },
+    mounted() {
+        this.getAge();
+    },
+    methods: {
+        getAge() {
+            const d = new Date();
+            const birthDay = new Date(+this.user.dob);
+            this.calculatedDob = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
         }
     }
 })
 </script>
-
-<style lang="scss">
-@import '@/assets/style.scss';
-
-/************************************************************/
-$text-size: 15px;
-$break-width: 0.5px;
-$break-point-size: 5px;
-$skills-height: 40px;
-
-.resume-editor-link {
-    @include link-style();
-    display: inline-block;
-    margin-top: 10px;
-}
-
-@mixin list-block-style() {
-    padding: 10px;
-    @include text();
-    /* background: var(--element-background); */
-    border: 1px solid var(--border-color);
-    line-height: 100%;
-    border-radius: 5px;
-    cursor: default;
-}
-
-@mixin timeline() {
-    .timeline-list {
-        display: flex;
-        flex-direction: column;
-        row-gap: 30px;
-        position: relative;
-        margin-left: 10px;
-
-        $pointer-width: 10px;
-        $pointer-margin: 4px;
-
-        &::before {
-            content: '';
-            height: 100%;
-            width: 0.5px;
-            background: var(--line-color2);
-            position: absolute;
-            left: calc($pointer-width / 2);
-            top: calc($pointer-margin);
-            translate: -50% 0;
-        }
-
-        .timeline-li {
-            display: flex;
-            column-gap: 20px;
-            @include text();
-
-            &::before {
-                content: '';
-                height: $pointer-width;
-                margin-top: $pointer-margin;
-                aspect-ratio: 1/1;
-                border-radius: 50%;
-                background: var(--line-color2);
-            }
-
-            .timeline-date {
-                width: 150px;
-
-                strong {
-                    font-family: var(--font-semiBold);
-                    display: inline-block;
-                    margin-bottom: 2px;
-                }
-            }
-
-            .content {
-                .timeline-title {
-                    font-family: var(--font-semiBold);
-                    color: var(--title-color);
-                    margin-bottom: 5px;
-                }
-            }
-        }
-    }
-}
-
-.sector {
-    padding: 20px 0;
-    padding-right: 20px;
-}
-
-.title {
-    font-family: var(--font-semiBold);
-    color: var(--title-color);
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-.break {
-    border: none;
-    height: $break-width;
-    width: 100%;
-    background: var(--line-color);
-    position: relative;
-
-    &::after {
-        content: '';
-        height: $break-point-size;
-        aspect-ratio: 1/1;
-        background: var(--line-color);
-        position: absolute;
-        border-radius: 50%;
-        right: 0;
-        top: 0;
-        translate: calc(50% + calc($break-width / 2)) -50%;
-    }
-
-    &[break-left] {
-        &::after {
-            left: 0;
-            translate: calc(-50% - calc($break-width / 2)) -50%;
-        }
-    }
-}
-
-@mixin text() {
-    font-size: $text-size;
-    font-family: var(--font-regular);
-    color: var(--title-color);
-    font-size: $text-size;
-}
-
-.text-block {
-    @include text();
-}
-
-.user-portfolio-scoped-style {
-    padding: 5px 5px !important;
-
-    .ant-select-item-option-content {
-        display: grid;
-        grid-template-columns: $skills-height auto;
-        align-items: center;
-
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        .skill-icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc($skills-height - 10px);
-        }
-    }
-
-    .ant-select-item-option-state {
-        display: flex;
-        margin-right: 5px;
-        justify-content: center;
-        align-items: center;
-    }
-}
-
-/************************************************************/
-.resume-editor {
-    .resume-wrapper {
-        display: flex;
-        padding: 60px 0;
-
-        @include media(1100px) {
-            flex-direction: column;
-        }
-
-        /* ============== RESUME CONTENT ============== */
-        .resume-content {
-            border-right: 0.5px solid var(--line-color);
-
-            @include media(1100px) {
-                border: none;
-                border-left: 0.5px solid var(--line-color);
-
-                .sector {
-                    padding-left: 20px;
-                }
-
-                .break {
-                    display: flex;
-                    justify-content: center;
-
-                    &::after {
-                        left: 0;
-                        right: auto;
-                        transform: translate(calc(-100% - $break-width), $break-width);
-                    }
-                }
-            }
-
-            .resume-sector-1 {
-                @include flex(space-between, center);
-                padding-right: 30px;
-                padding-top: 10px;
-
-                .left {
-                    .user-name {
-                        font-size: 35px;
-                        margin-bottom: 10px;
-                    }
-
-                    .user-date {
-                        @include text();
-                        margin-bottom: 5px;
-                    }
-                }
-
-                .right {
-                    display: flex;
-                    flex-direction: column;
-
-                    .resume-editor-link {
-                        border-radius: 50%;
-                        border: 0.5px solid var(--border-color);
-                        overflow: hidden;
-
-                        .user-image {
-                            height: 140px;
-                            aspect-ratio: 1/1;
-                            object-fit: cover;
-                        }
-                    }
-                }
-            }
-
-            .resume-sector-2 {
-                .contact {
-                    margin: 5px 0;
-
-                    .contact-name {
-                        text-transform: capitalize;
-                        @include text();
-                    }
-
-                    .contact-link {
-                        @include text();
-                        @include link-style();
-                        font-size: calc($text-size - 1px);
-
-                        &:hover {
-                            color: rgb(216, 0, 0);
-                        }
-                    }
-                }
-            }
-
-            .resume-sector-3 {
-                .content {
-                    display: flex;
-                    @include text();
-                }
-            }
-
-            .resume-sector-4 {
-                margin: 20px 0;
-
-                .content {
-                    .user-position {
-                        font-size: 18px;
-                    }
-
-                    .user-salary {
-                        @include text();
-                        font-size: calc($text-size + 5px);
-                        margin-bottom: 10px;
-
-                        span {
-                            @include text();
-                            font-size: calc($text-size + 6px);
-                            font-family: var(--font-semiBold);
-                        }
-                    }
-
-                    .user-specialization {
-                        .title {
-                            @include text();
-                            margin-bottom: 5px;
-                        }
-
-                        .spec-list {
-                            margin-bottom: 15px;
-
-                            .spec-li {
-                                padding: 5px 0;
-                                padding-left: 25px;
-                                position: relative;
-                                @include text();
-
-                                &::before {
-                                    content: '';
-                                    position: absolute;
-                                    left: 7px;
-                                    width: 13px;
-                                    display: block;
-                                    height: 0.5px;
-                                    background: var(--text-color);
-                                    top: 50%;
-                                    transform: translate(0, -50%);
-                                }
-                            }
-                        }
-                    }
-
-                    .user-employment {
-                        @include text();
-                        margin-bottom: 10px;
-                    }
-
-                    .user-schedule {
-                        @include text();
-                        margin-bottom: 10px;
-                    }
-                }
-            }
-
-            .resume-sector-5 {
-                padding: 20px auto;
-
-                $skills-gap: 8px;
-                $skills-list-padding: 7px 0;
-                $skills-icon-size: 40px;
-
-                .content {
-
-                    @mixin skill-block {
-                        @include list-block-style();
-                        display: flex;
-                        align-items: center;
-                        padding: 0;
-                        column-gap: 2px;
-                        border-radius: 40px;
-                        padding: 0px 10px;
-                        overflow: hidden;
-                        height: $skills-height;
-
-                        .skill-name {
-                            line-height: 100%;
-                            margin-bottom: 0;
-                        }
-
-                        .skill-icon {
-                            height: 100%;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            margin-left: -2px;
-
-                            svg {
-                                height: 70%;
-                                aspect-ratio: 1/1;
-                                object-fit: contain;
-                                display: flex;
-                                justify-content: center;
-                            }
-                        }
-                    }
-
-                    .user-skills {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: $skills-gap;
-                        padding: $skills-list-padding;
-
-                        .skill {
-                            @include skill-block();
-                        }
-                    }
-
-                    .skill-icon {
-                        height: $skills-icon-size;
-                    }
-
-                    .skills-select {
-                        .ant-select-selector {
-                            padding: $skills-list-padding;
-                            border-left: none;
-                            border-right: none;
-                            border-radius: 0;
-                            box-shadow: none;
-                            box-sizing: content-box;
-                        }
-
-                        .ant-select-selection-overflow {
-                            display: flex;
-                            gap: $skills-gap;
-
-                            * {
-                                margin: 0;
-                                padding: 0;
-                            }
-                        }
-
-                        .ant-select-selection-item {
-                            height: auto;
-                            background: transparent;
-                            border: none;
-                            padding: 0;
-
-                            .ant-select-selection-item-content {
-                                @include skill-block();
-                            }
-
-                            .ant-select-selection-item-remove {
-                                position: absolute;
-                                right: 0;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                top: 0;
-                                background: rgb(240, 75, 75);
-                                border-radius: 50%;
-                                height: 12px;
-                                aspect-ratio: 1/1;
-
-                                span {
-                                    height: 60%;
-                                    aspect-ratio: 1/1;
-
-                                    svg {
-                                        height: 100%;
-                                        width: 100%;
-                                        fill: white;
-                                    }
-                                }
-                            }
-
-                            .anticon-close {
-                                vertical-align: 0;
-                                line-height: 0;
-                            }
-                        }
-
-                    }
-                }
-            }
-
-            .resume-sector-6 {
-                padding: 20px auto;
-
-                .user-aboutMe {
-                    @include text();
-                }
-            }
-
-            .resume-sector-7 {
-                padding: 20px auto;
-
-                .user-portfolio-list {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 12px;
-
-                    .user-portfolio {
-                        height: 200px;
-                        aspect-ratio: 1/1;
-                        cursor: pointer;
-
-                        @include media(450px) {
-                            height: 150px;
-                        }
-
-                        @include media(350px) {
-                            height: 130px;
-                        }
-
-                        .content {
-                            height: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: space-between;
-                            position: relative;
-                            overflow: hidden;
-                            padding: 7px;
-
-                            .portfolio-image {
-                                height: 100%;
-                                width: 100%;
-                                object-fit: contain;
-                            }
-
-                            .portfolio-bg {
-                                object-fit: cover;
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                height: 100%;
-                                width: 100%;
-                                z-index: -1;
-                                filter: blur(20px) saturate(2);
-                            }
-
-                            .portfolio-name {
-                                white-space: nowrap;
-                                width: 100%;
-                                @include text();
-                            }
-
-                        }
-
-                    }
-                }
-
-                .portfolio-dialog {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    padding: 30px;
-                    justify-content: center;
-                    align-items: center;
-                    background: gray;
-                    z-index: 1000;
-                    height: 100%;
-                    width: 100%;
-                    display: none;
-                    background: rgba(0, 0, 0, 0.388);
-
-                    @include media(550px) {
-                        padding: 80px;
-                    }
-
-                    &[open='true'] {
-                        display: flex;
-                        opacity: 0;
-                        visibility: collapse;
-                        animation: open-dialog 0.3s forwards;
-
-                        @keyframes open-dialog {
-                            100% {
-                                opacity: 1;
-                                visibility: visible;
-                            }
-                        }
-                    }
-
-                    .dialog-content {
-                        display: inline-flex;
-                        max-height: 70%;
-                        width: 100%;
-                        max-width: 1000px;
-                        background: white;
-                        border-radius: 15px;
-                        overflow: hidden;
-
-                        @include media(550px) {
-                            flex-direction: column;
-                            align-items: center;
-                            max-height: 100%;
-                            max-width: auto;
-                            width: auto;
-                            padding-left: 6px;
-                        }
-
-                        .dialog-show {
-                            overflow-y: scroll;
-                            width: 60%;
-                            border-right: 0.5px solid var(--border-color);
-
-                            @include media(550px) {
-                                width: 100%;
-                                max-height: 450px;
-                                height: 100%;
-                                border: none;
-                            }
-
-                            /* padding-left: 10px; */
-
-                            .portfolio-image {
-                                object-fit: contain;
-                                width: 100%;
-                            }
-                        }
-
-                        .dialog-description {
-                            padding: 20px;
-                            width: 40%;
-                            overflow-y: scroll;
-
-                            @include media(550px) {
-                                width: 100%;
-                                height: 100%;
-                                border-top: 0.5px solid var(--border-color);
-                            }
-
-                            .description {
-                                line-height: 160%;
-                            }
-                        }
-
-                    }
-
-                    .exit-button {
-                        position: absolute;
-                        top: 3vh;
-                        height: 40px;
-                        right: 3vh;
-                        cursor: pointer;
-                        @include rm-default();
-
-                        @include media(550px) {
-                            height: 35px;
-                        }
-
-                        svg {
-                            fill: var(--text-color);
-                        }
-                    }
-                }
-            }
-
-            .resume-sector-8,
-            .resume-sector-9 {
-                .content {
-                    margin-bottom: 5px;
-                    @include timeline();
-                }
-            }
-
-            .resume-sector-10 {
-                .content {
-                    .user-languages {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 8px;
-
-                        li {
-                            @include list-block-style();
-                            @include text();
-
-                            span {
-                                text-transform: capitalize;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .resume-sector-11 {
-                padding: 20px 0;
-
-                .user-certificate-list {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 12px;
-
-                    .user-certificate {
-                        height: 140px;
-                        cursor: pointer;
-
-                        .content {
-                            height: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: space-between;
-                            position: relative;
-                            overflow: hidden;
-
-                            .certificate-image {
-                                height: 100%;
-                                width: 100%;
-                                object-fit: contain;
-                            }
-
-                            .certificate-name {
-                                white-space: nowrap;
-                                width: 100%;
-                                @include text();
-                            }
-                        }
-                    }
-                }
-            }
-
-            .resume-sector-12 {
-                .content {
-                    @include timeline();
-
-                    .career-list {
-                        margin-top: 40px;
-                        display: flex;
-                        row-gap: 50px;
-                    }
-
-                    .career-year {
-                        font-family: var(--font-semiBold);
-                    }
-                }
-            }
-
-            .resume-sector-13 {
-                display: auto;
-            }
-        }
-
-        /* ============== RESUME TOOLS ============== */
-
-        .resume-tools {
-            min-width: 300px;
-            position: relative;
-            $padding-left: 15px;
-            padding-top: 5px;
-
-            .tools-title {
-                font-size: 18px;
-            }
-
-            .content {
-                /* background: gray; */
-                position: sticky;
-                top: 25px;
-
-                .header {
-                    padding-left: $padding-left;
-                    padding-bottom: 20px;
-
-                    .top {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 40px;
-
-                        .ant-select {
-                            height: 40px;
-
-                            * {
-                                font-family: var(--font-regular);
-                                line-height: 100%;
-                                overflow: visible;
-                            }
-
-                            .ant-select-selector {
-                                height: 100%;
-                                display: flex;
-                                align-items: center;
-                                border-radius: 8px;
-                                border-color: var(--border-color);
-                            }
-
-                            .ant-select-arrow {
-                                svg {
-                                    fill: var(--border-color);
-                                }
-                            }
-                        }
-
-                        .top-btns {
-                            display: flex;
-                            border-radius: 8px;
-                            overflow: hidden;
-                            height: 40px;
-                            border: 0.5px solid var(--line-color);
-
-                            button {
-                                border: none;
-                                padding: 10px 12px;
-                                cursor: pointer;
-                                height: 100%;
-                                border-right: 0.5px solid var(--line-color);
-                                @include element-title();
-                            }
-                        }
-                    }
-
-                    .tools-visibility {
-                        .ant-select {
-                            width: 100%;
-
-                            * {
-                                font-family: var(--font-regular);
-                                line-height: 100%;
-                                overflow: visible;
-                            }
-
-                            .ant-select-selector {
-                                height: 100%;
-                                display: flex;
-                                align-items: center;
-                                border-radius: 8px;
-                                border-color: var(--border-color);
-                            }
-                        }
-                    }
-
-                }
-
-                .tools-resume-completion {
-                    padding-top: 20px;
-                    padding-left: $padding-left;
-
-                    $height: 110px;
-                    $stroke-width: 3px;
-                    $stroke-color: rgb(241, 143, 78);
-                    $background: rgb(220, 220, 220);
-
-                    .tools-diagram {
-                        height: $height;
-                        aspect-ratio: 1/1;
-                        margin: 0 auto;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        margin-bottom: 20px;
-                        /* overflow: hidden; */
-                        position: relative;
-
-                        .svg-chart,
-                        .svg-bg {
-                            height: calc(100% - $stroke-width * 2);
-                            width: calc(100% - $stroke-width * 2);
-                            position: absolute;
-                            overflow: visible;
-                            stroke-width: $stroke-width;
-                            stroke: $stroke-color;
-                            transform: rotate(-90deg) translate(50%, 50%);
-                            animation: draw 1s forwards cubic-bezier(0.66, 0.07, 0.29, 0.96);
-
-
-                            @keyframes draw {
-                                0% {
-                                    stroke-dasharray: 315%;
-                                    stroke-dashoffset: 315%;
-                                }
-                            }
-                        }
-
-                        .svg-bg {
-                            stroke: $background;
-                            stroke-dasharray: 0;
-                            stroke-dashoffset: 0;
-                            z-index: -1;
-                            animation: none;
-                        }
-
-                        .tools-percentage {
-                            position: absolute;
-                            padding: 0;
-                            margin: 0;
-                            opacity: 0;
-                            animation: percentage 1s forwards;
-                            animation-delay: 0.2s;
-
-                            @keyframes percentage {
-                                100% {
-                                    opacity: 1;
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-            }
-        }
-    }
-}
-</style>

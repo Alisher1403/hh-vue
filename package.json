@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
+    "@ckeditor/ckeditor5-build-classic": "^39.0.2",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "ant-design-vue": "^4.0.2",
+    "dayjs": "^1.11.9",
     "firebase": "^10.3.1",
     "sass": "^1.66.1",
     "vite-tsconfig-paths": "^4.2.0",

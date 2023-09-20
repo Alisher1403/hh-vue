@@ -31,7 +31,7 @@ import { defineComponent, ref } from "vue";
 import { icons } from "@/assets/icons";
 
 export default defineComponent({
-    name: 'SearchBox',
+    name: 'SearchBar',
     setup() {
         const inputFocus = ref<boolean>(false);
         const input = ref<string>('')

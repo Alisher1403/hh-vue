@@ -58,10 +58,10 @@ export { ResumeOptions };
 
 export interface iUserResume {
   name: string;
-  gender: string | null;
+  gender: "M" | "F" | null;
   img: string;
   dob: string;
-  contact: Array<{ name: string; value: string; type: string; preferred?: boolean | null }>;
+  contact: Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>;
   city: string | null;
   move: boolean | null;
   bTrip: boolean | null;

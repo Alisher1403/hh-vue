@@ -151,50 +151,6 @@ $skills-height: 40px;
   }
 }
 
-.editor-btns {
-  display: flex;
-  column-gap: 5px;
-  justify-content: flex-end;
-
-  &.align-start {
-    justify-content: flex-start;
-  }
-
-  $bg: var(--btn-bg);
-  $bg-hover: var(--btn-bg-hover);
-  $transition: var(--btn-bg-transition);
-  margin-top: 20px;
-
-  .editor-btn {
-    background-color: $bg;
-    border-radius: 25px;
-    cursor: pointer;
-    @include text();
-    border: none;
-    font-size: 14px;
-    padding: 10px 15px;
-    border: 1px solid $bg;
-    color: white;
-    transition: 0.2s;
-
-    &:hover {
-      background-color: $bg-hover;
-    }
-
-    &[transparent] {
-      background-color: transparent;
-      color: $bg;
-      border: 1px solid $bg;
-      transition: 0.2s;
-
-      &:hover {
-        color: white;
-        background-color: $bg;
-      }
-    }
-  }
-}
-
 /************************************************************/
 .resume-editor {
   .resume-wrapper {

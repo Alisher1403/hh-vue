@@ -1,5 +1,6 @@
 import Navigation from "./Navigation.vue";
-import SearchBox from "./SearchBar.vue";
+import SearchBar from "./SearchBar.vue";
 import ActiveSeek from "./ActiveSeek.vue";
 import ResumeCard from "./Cards/ResumeCard.vue";
-export { Navigation, SearchBox, ActiveSeek, ResumeCard };
+import EditorButtons from "./EditorButtons/EditorButtons.vue";
+export { Navigation, SearchBar, ActiveSeek, ResumeCard, EditorButtons };

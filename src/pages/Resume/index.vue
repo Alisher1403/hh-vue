@@ -8,18 +8,18 @@
                     <!------------------ SECTOR 1 ------------------->
                     <div class="resume-sector-1 sector">
                         <div class="left">
-                            <h1 class="user-name title">{{ user.name }}</h1>
+                            <h1 class="user-name title">{{ resume.name }}</h1>
 
                             <div class="user-date" v-if="!faqChange">
-                                <span v-if="user.gender != ''">{{ user.gender == 'M' ? 'Мужчина, ' : user.gender == 'F' ?
-                                    'Женщина, '
-                                    : null }}</span>
+                                <span v-if="resume.gender">
+                                    {{ resume.gender == 'M' ? 'Мужчина, ' :
+                                        resume.gender == 'F' ? 'Женщина, ' : null }}</span>
                                 <span>{{ calculatedDob }}
                                     лет</span>,
-                                <span v-if="user.dob">родился
-                                    {{ dayjs(+user.dob).date() }}
-                                    {{ months.rus[dayjs(+user.dob).month()] }}
-                                    {{ dayjs(+user.dob).year() }}
+                                <span v-if="resumeData.dob.value">родился
+                                    {{ dayjs(resumeData.dob.value).date() }}
+                                    {{ months.rus[dayjs(resumeData.dob.value).month()] }}
+                                    {{ dayjs(resumeData.dob.value).year() }}
                                 </span>
                             </div>
 
@@ -38,10 +38,10 @@
                                         value: 'F',
                                         label: 'Женщина'
                                     },
-                                ]" v-model:value="genderData" style="width: 120px;">
+                                ]" v-model:value="resumeData.gender.value" style="width: 120px;">
                                 </a-select>
 
-                                <a-date-picker v-model:value="dobData" :format="'DD.MM.YYYY'" />
+                                <a-date-picker v-model:value="resumeData.dob.value" :format="'DD.MM.YYYY'" />
                             </div>
 
 
@@ -49,40 +49,34 @@
                             <button class="resume-editor-link" v-if="!faqChange"
                                 @click="faqChange = true">Редактировать</button>
 
-                            <div class="editor-btns align-start" v-if="faqChange">
-                                <button class="editor-btn" @click="() => {
-                                    user['gender'] = genderData; user['dob'] = `${dayjs(dobData).unix() * 1000}`, getAge();;
-                                    ; faqChange = false
-                                }">Сохранить</button>
-                                <button class="editor-btn" transparent
-                                    @click="() => { genderData = user['gender']; dobData = dayjs(dayjs(+user.dob), 'DD/MM/YYYY'); faqChange = false }">Отменить</button>
-                            </div>
+                            <EditorButtons v-if="faqChange" @save="resumeData.setFaq()"
+                                @cancel="() => { resumeData.cancel('faq') }" />
                         </div>
 
                         <div class="right">
                             <router-link to="" class="resume-editor-link">
-                                <img :src="user.img" class="user-image" alt="">
+                                <img :src="resume.img" class="user-image" alt="">
                             </router-link>
                         </div>
                     </div>
 
                     <!------------------ SECTOR 2 ------------------->
-                    <div class="resume-sector-2 sector" v-if="user.contact">
+                    <div class="resume-sector-2 sector" v-if="resume.contact">
                         <h4 class="title">Контакты</h4>
-                        <p class="contact" v-for="contact in user.contact" :key="user.contact.indexOf(contact)">
+                        <p class="contact" v-for="contact in resume.contact" :key="resume.contact.indexOf(contact)">
                             <span class="contact-name">{{ contact.name }}: </span>
                             <a class="contact-link" :href="contact.type + contact.value"
                                 :target="contact.type !== 'tel:' ? '_blank' : ''">
                                 {{ contact.value }}</a>
                         </p>
-                        <router-link to="" class="resume-editor-link">Редактировать</router-link>
+                        <button class="resume-editor-link">Редактировать</button>
                     </div>
 
                     <!------------------ SECTOR 3 ------------------->
                     <div class="resume-sector-3 sector">
                         <div class="content">
-                            <p>{{ user.move ? 'готов к переезду' : 'не готов к переезду' }},&nbsp;</p>
-                            <p>{{ user.bTrip ? 'готов к командировкам' : 'не готов к командировкам' }}</p>
+                            <p>{{ resume.move ? 'готов к переезду' : 'не готов к переезду' }},&nbsp;</p>
+                            <p>{{ resume.bTrip ? 'готов к командировкам' : 'не готов к командировкам' }}</p>
                         </div>
                         <router-link to="" class="resume-editor-link">Редактировать</router-link>
                     </div>
@@ -94,20 +88,20 @@
                         <div class="content">
 
                             <div class="user-position title">
-                                <h2>{{ user.position }}</h2>
+                                <h2>{{ resume.position }}</h2>
                             </div>
 
-                            <p class="user-salary">Зарплата: <span>{{ user.salary }}{{ user.currency }}</span></p>
+                            <p class="user-salary">Зарплата: <span>{{ resume.salary }}{{ resume.currency }}</span></p>
 
                             <div class="user-specialization">
                                 <p class="title">Специализации: </p>
                                 <ul class="spec-list">
-                                    <li class="spec-li" v-for="spec in user.specialization" :key="spec">{{ spec }}</li>
+                                    <li class="spec-li" v-for="spec in resume.specialization" :key="spec">{{ spec }}</li>
                                 </ul>
                             </div>
 
-                            <p class="user-employment">Занятость: {{ ResumeOptions.employment[user.employment] }}</p>
-                            <p class="user-schedule">График работы: {{ ResumeOptions.schedule[user.schedule] }}</p>
+                            <p class="user-employment">Занятость: {{ ResumeOptions.employment[resume.employment] }}</p>
+                            <p class="user-schedule">График работы: {{ ResumeOptions.schedule[resume.schedule] }}</p>
                         </div>
 
                         <router-link to="" class="resume-editor-link">Редактировать</router-link>
@@ -121,7 +115,7 @@
                             <h2 class="title">Ключевые навыки</h2>
 
                             <ul class="user-skills" v-if="!skillsChange" v-memo="[skillsData]">
-                                <li class="skill" v-for="skill in user.skills" :key="skill">
+                                <li class="skill" v-for="skill in resume.skills" :key="skill">
                                     <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
                                     <p class="skill-name text-block">{{ skillsIcons[skill.toLocaleLowerCase()] ?
                                         skillsIcons[skill.toLocaleLowerCase()].name : skill }}
@@ -143,19 +137,16 @@
                         <button class="resume-editor-link" @click="skillsChange = true"
                             v-if="!skillsChange">Редактировать</button>
 
-                        <div class="editor-btns" v-if="skillsChange">
-                            <button class="editor-btn"
-                                @click="() => { user['skills'] = skillsData; skillsChange = false }">Сохранить</button>
-                            <button class="editor-btn" transparent
-                                @click="() => { skillsData = user['skills'].map(el => el.toLocaleLowerCase()); skillsChange = false }">Отменить</button>
-                        </div>
+                        <EditorButtons v-if="skillsChange" justify-end
+                            @save="() => { resume['skills'] = skillsData; skillsChange = false }"
+                            @cancel="() => { skillsData = resume['skills'].map(el => el.toLocaleLowerCase()); skillsChange = false }" />
                     </div>
 
                     <!------------------ SECTOR 6 ------------------->
                     <div class="resume-sector-6 sector">
                         <div class="content">
                             <div class="title">Обо мне</div>
-                            <div class="user-aboutMe" v-html="user.aboutMe" v-if="!aboutMeChange"></div>
+                            <div class="user-aboutMe" v-html="resume.aboutMe" v-if="!aboutMeChange"></div>
                         </div>
 
                         <div v-if="aboutMeChange">
@@ -166,12 +157,10 @@
                         <button class="resume-editor-link" v-if="!aboutMeChange"
                             @click="aboutMeChange = true">Редактировать</button>
 
-                        <div class="editor-btns" v-if="aboutMeChange">
-                            <button class="editor-btn"
-                                @click="() => { user['aboutMe'] = aboutMeData; aboutMeChange = false }">Сохранить</button>
-                            <button class="editor-btn" transparent
-                                @click="() => { aboutMeData = user['aboutMe']; aboutMeChange = false }">Отменить</button>
-                        </div>
+
+                        <EditorButtons v-if="aboutMeChange" justify-end
+                            @save="() => { resume['aboutMe'] = aboutMeData; aboutMeChange = false }"
+                            @cancel="() => { aboutMeData = resume['aboutMe']; aboutMeChange = false }" />
                     </div>
 
                     <hr class="break">
@@ -181,8 +170,8 @@
                         <div class="content">
                             <h2 class="title">Портфолио</h2>
                             <ul class="user-portfolio-list">
-                                <li class="user-portfolio" v-for="portfolio in user.portfolio"
-                                    :key="user.portfolio.indexOf(portfolio)">
+                                <li class="user-portfolio" v-for="portfolio in resume.portfolio"
+                                    :key="resume.portfolio.indexOf(portfolio)">
                                     <div class="content" @click="portfolioDialog(portfolio)">
                                         <img class="portfolio-image" :src="portfolio.img" alt="">
                                         <img class="portfolio-bg" :src="portfolio.img" alt="">
@@ -216,8 +205,8 @@
                         <div class="content">
                             <h2 class="title">Высшее образование</h2>
                             <ul class="user-education-list timeline-list">
-                                <li class="user-education timeline-li" v-for="education in user.education"
-                                    :key="user.education.indexOf(education)">
+                                <li class="user-education timeline-li" v-for="education in resume.education"
+                                    :key="resume.education.indexOf(education)">
                                     <div class="graduation timeline-date">
                                         <strong>{{ education.graduatedAt }}</strong>
                                         <br>
@@ -242,8 +231,8 @@
                         <div class="content">
                             <h2 class="title">Повышение квалификации, курсы</h2>
                             <ul class="user-education-list timeline-list">
-                                <li class="user-education timeline-li" v-for="course in user.courses"
-                                    :key="user.courses.indexOf(course)">
+                                <li class="user-education timeline-li" v-for="course in resume.courses"
+                                    :key="resume.courses.indexOf(course)">
                                     <div class="graduation timeline-date">
                                         <strong>{{ course.graduatedAt }}</strong>
                                         <br>
@@ -267,8 +256,8 @@
                         <div class="content">
                             <h2 class="title">Знание языков</h2>
                             <ul class="user-languages">
-                                <li>{{ user.motherLang }}</li>
-                                <li v-for="language in user.languages" :key="user.languages.indexOf(language)">
+                                <li>{{ resume.motherLang }}</li>
+                                <li v-for="language in resume.languages" :key="resume.languages.indexOf(language)">
                                     <span>{{ language.name }}</span> — {{ ResumeOptions.languagesLevel[language.level] }}
                                 </li>
                             </ul>
@@ -282,8 +271,8 @@
                         <div class="content">
                             <h2 class="title">Дипломы, Сертификаты</h2>
                             <ul class="user-certificate-list">
-                                <li class="user-certificate" v-for="certificate in user.certificates"
-                                    :key="user.certificates.indexOf(certificate)">
+                                <li class="user-certificate" v-for="certificate in resume.certificates"
+                                    :key="resume.certificates.indexOf(certificate)">
                                     <div class="content">
                                         <img class="certificate-image" :src="certificate.img" alt="">
                                     </div>
@@ -301,8 +290,8 @@
                         <div class="content">
                             <h2 class="title">Карьерный рост, Опыт</h2>
                             <ul class="career-list timeline-list">
-                                <li class="career timeline-li" v-for="career in user.career"
-                                    :key="user.career.indexOf(career)">
+                                <li class="career timeline-li" v-for="career in resume.career"
+                                    :key="resume.career.indexOf(career)">
                                     <strong class="career-year">{{ career.year }}</strong>
                                     <div class="content">
                                         <h4 class="timeline-title">{{ career.name }}</h4>
@@ -324,21 +313,21 @@
                             <h2 class="title">Гражданство, время в пути до работы</h2>
                             <div class="content">
                                 <p class="user-citizenship text-block">Гражданство:
-                                    <span v-for="citizenship in user.citizenship" :key="citizenship">
-                                        {{ citizenship }}{{ user.citizenship.indexOf(citizenship) + 1 !=
-                                            user.citizenship.length
+                                    <span v-for="citizenship in resume.citizenship" :key="citizenship">
+                                        {{ citizenship }}{{ resume.citizenship.indexOf(citizenship) + 1 !=
+                                            resume.citizenship.length
                                             ? ',' : null }}
                                     </span>
                                 </p>
                                 <p class="user-workPermission text-block">Разрешение на работу:
-                                    <span v-for="work in user.workPermission" :key="work">
-                                        {{ work }}{{ user.workPermission.indexOf(work) !=
-                                            user.citizenship.length
+                                    <span v-for="work in resume.workPermission" :key="work">
+                                        {{ work }}{{ resume.workPermission.indexOf(work) !=
+                                            resume.citizenship.length
                                             ? ', ' : null }}
                                     </span>
                                 </p>
                                 <p class="user-workPermission text-block">Желательное время в пути до работы: {{
-                                    ResumeOptions.travel[user.travel] }}
+                                    ResumeOptions.travel[resume.travel] }}
                                 </p>
                             </div>
                         </div>
@@ -403,27 +392,32 @@
 <!-- ============================================================================================================================ -->
 
 <script lang="ts">
-import { defineComponent, watch } from "vue";
+import { defineComponent, Ref, watch } from "vue";
 import "./style.scss";
 import { ref } from "vue";
 import { months, ResumeOptions, iUserResume } from "@/data/interfaces";
 import type { SelectProps } from 'ant-design-vue';
 import { icons, skillsIcons } from "@/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { UseTodo } from "@/hooks";
+import { EditorButtons } from "@/components/UI";
 import * as dayjs from 'dayjs'
 
 export default defineComponent({
     name: 'Resume',
+    components: {
+        EditorButtons
+    },
     setup() {
-        const user: iUserResume = {
+        const resume: iUserResume = {
             name: 'Чинбердиев Алишер Акромович',
             gender: 'M',
             img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1694572856&h=E7td_zjiTfgT0gqyeFO6uw',
             dob: '1047582000000',
             contact: [
-                { name: 'phone', value: '+998 (97) 777-31-91', type: 'tel:', preferred: false },
-                { name: 'gmail', value: 'alisherchinberdiyev1403@gmail.com', type: 'mailTo:', preferred: true },
-                { name: 'telegram', value: 'https://t.me/alisher2552', type: '', preferred: false },
+                { id: 1, name: 'phone', value: '+998 (97) 777-31-91', type: 'tel:', preferred: false },
+                { id: 2, name: 'gmail', value: 'alisherchinberdiyev1403@gmail.com', type: 'mailTo:', preferred: true },
+                { id: 3, name: 'telegram', value: 'https://t.me/alisher2552', type: '', preferred: false },
             ],
             city: 'Tashkent',
             move: false,
@@ -496,9 +490,11 @@ export default defineComponent({
             langSelected: 'rus',
         }
 
-        // ************************************* //
+        /**
+        * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
+        */
 
-        const langOptionsValue = ref<string>(user.langSelected)
+        const langOptionsValue = ref<string>(resume.langSelected)
         const langOptions = ref<SelectProps['options']>([
             {
                 value: 'rus',
@@ -534,6 +530,10 @@ export default defineComponent({
             }
         ]);
 
+        /**
+        * ! ------------------------------ RESUME EDITING BOOLEAN STATES ---------------------------------- !
+        */
+
         const completed = ref<number>(65);
         const portfolioCheckout = ref<{ title: string, description: string, img: string } | null>(null);
 
@@ -542,28 +542,79 @@ export default defineComponent({
             portfolioCheckout.value = portfolio;
         }
 
-        const genderData = ref<string | null>(user.gender);
-        const dobData = ref<dayjs.Dayjs | null>(dayjs(dayjs(+user.dob), 'DD/MM/YYYY'));
         const calculatedDob = ref<number>();
 
         const faqChange = ref<boolean>(false);
 
-        const skillsData = ref<Array<string>>([...user.skills].map(el => el.toLocaleLowerCase()));
+        const skillsData = ref<Array<string>>([...resume.skills].map(el => el.toLocaleLowerCase()));
         const skillsChange = ref<boolean>(false);
 
-        const aboutMeData = ref<string>(user.aboutMe);
+        const aboutMeData = ref<string>(resume.aboutMe);
         const aboutMeChange = ref<boolean>(false);
 
         const antParentNode = (trigger: any): void => trigger.parentNode;
 
-        watch(faqChange, (dat) => {
+        watch(faqChange, (data) => {
             if (!faqChange.value) {
-                console.log(dat);
+                console.log(data);
             }
         })
 
+        /**
+        * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
+        */
+
+        class ResumeData {
+            gender: Ref;
+            dob: Ref;
+
+            constructor() {
+                this.gender = ref<'M' | 'F' | null>(resume.gender);
+                this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.dob), 'DD/MM/YYYY'));
+            }
+
+            public setFaq() {
+                resume.gender = this.gender.value;
+                resume.dob = `${dayjs(this.dob.value).unix() * 1000}`;
+                faqChange.value = false;
+                getAge();
+            }
+
+            public cancel(method: string): void {
+                const cancelMethods = {
+                    faq: (): void => {
+                        resumeData.gender.value = resume['gender'];
+                        resumeData.dob.value = dayjs(dayjs(+resume.dob), 'DD/MM/YYYY');
+                        faqChange.value = false;
+                    }
+                }
+                type ObjectKey = keyof typeof cancelMethods;
+                const methodName = method as ObjectKey;
+                cancelMethods[methodName]();
+            }
+        }
+
+        const resumeData = new ResumeData();
+
+        console.log({ ...new ResumeData() });
+
+
+        /**
+        * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
+        */
+
+        function getAge(): void {
+            const d = new Date();
+            const birthDay = new Date(+resume.dob);
+            calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
+        }
+
+
+        /**
+        * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
+        */
         return {
-            user,
+            resume,
             months,
             ResumeOptions,
             langOptionsValue,
@@ -575,8 +626,6 @@ export default defineComponent({
             completed,
             portfolioCheckout,
             portfolioDialog,
-            genderData,
-            dobData,
             calculatedDob,
             faqChange,
             skillsData,
@@ -586,17 +635,15 @@ export default defineComponent({
             aboutMeChange,
             antParentNode,
             dayjs,
+            resumeData,
+            getAge,
         }
     },
+    /**
+    * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
+    */
     mounted() {
         this.getAge();
     },
-    methods: {
-        getAge() {
-            const d = new Date();
-            const birthDay = new Date(+this.user.dob);
-            this.calculatedDob = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
-        }
-    }
 })
 </script>

@@ -37,6 +37,7 @@
   --border-color: rgb(166, 166, 166);
   --btn-bg: rgb(39, 39, 39);
   --btn-bg-hover: rgb(75, 75, 75);
+  --modal-bg: rgba(0, 0, 0, 0.129);
   --btn-bg-transition: 0.2s;
   --text-size: 15px;
   --font-light: "NotoSans-Light";
@@ -106,27 +107,57 @@
   }
 }
 
-@mixin custom-btn($background: #167ed9, $border: #167ed9) {
-  background: $background;
-  border: 1px solid #167ed9;
+@mixin custom-btn() {
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-bg);
   color: white;
-  border-radius: 5px;
+  border-radius: 40px;
   line-height: 100%;
   font-size: 14px;
-  padding: 10px;
+  padding: 10px 15px;
   user-select: none;
   cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 8px;
+  font-family: var(--font-regular);
+
+  *[icon] {
+    height: 12px;
+    fill: white;
+    stroke: white;
+    display: flex;
+    align-items: center;
+  }
+
+  &[size="small"] {
+    padding: 5px 12px;
+    * {
+      font-size: 12px;
+    }
+    *[icon] {
+      height: 10px;
+    }
+  }
+
+  * {
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
 
   &:hover {
-    background: #1470c1;
+    background: var(--btn-bg-hover);
   }
 
   &[white] {
-    color: #167ed9;
+    color: var(--btn-bg);
     background: transparent;
 
     &:hover {
-      background: #167ed9;
+      background: var(--btn-bg);
       color: white;
     }
   }
@@ -270,6 +301,7 @@ h6 {
   * {
     font-family: var(--font-regular) !important;
     line-height: 100% !important;
+    overflow: visible !important;
   }
 
   .ant-select-selector {
@@ -293,4 +325,8 @@ h6 {
   svg {
     fill: var(--border-color);
   }
+}
+
+.custom-btn {
+  @include custom-btn();
 }

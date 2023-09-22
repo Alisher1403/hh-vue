@@ -226,21 +226,30 @@ $skills-height: 40px;
       }
 
       .resume-sector-2 {
-        .contact {
-          margin: 5px 0;
+        ul {
+          li {
+            margin: 10px 0;
+            .content {
+              display: flex;
+              align-items: center;
+              column-gap: 12px;
 
-          .contact-name {
-            text-transform: capitalize;
-            @include text();
-          }
+              .contact {
+                .contact-name {
+                  text-transform: capitalize;
+                  @include text();
+                }
 
-          .contact-link {
-            @include text();
-            @include link-style();
-            font-size: calc($text-size - 1px);
+                .contact-link {
+                  @include text();
+                  @include link-style();
+                  font-size: calc($text-size - 1px);
 
-            &:hover {
-              color: rgb(216, 0, 0);
+                  &:hover {
+                    color: rgb(216, 0, 0);
+                  }
+                }
+              }
             }
           }
         }
@@ -941,4 +950,34 @@ $skills-height: 40px;
 .ant-select-item-option-content {
   display: flex;
   align-items: center;
+}
+
+.todo-editor {
+  display: flex;
+  column-gap: 3px;
+
+  .editor-button {
+    height: 24px;
+    cursor: pointer;
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--btn-bg);
+    border-radius: 4px;
+    background: transparent;
+
+    &:hover {
+      background: var(--btn-bg-hover);
+
+      svg {
+        fill: white !important;
+        stroke: white !important;
+      }
+    }
+
+    svg {
+      stroke: var(--btn-bg);
+    }
+  }
 }

@@ -44,7 +44,6 @@
                                 <a-date-picker v-model:value="resumeData.dob.value" :format="'DD.MM.YYYY'" />
                             </div>
 
-
                             <!-- EDITING -->
                             <button class="resume-editor-link" v-if="!faqChange"
                                 @click="faqChange = true">Редактировать</button>
@@ -62,14 +61,59 @@
 
                     <!------------------ SECTOR 2 ------------------->
                     <div class="resume-sector-2 sector" v-if="resume.contact">
-                        <h4 class="title">Контакты</h4>
-                        <p class="contact" v-for="contact in resume.contact" :key="resume.contact.indexOf(contact)">
-                            <span class="contact-name">{{ contact.name }}: </span>
-                            <a class="contact-link" :href="contact.type + contact.value"
-                                :target="contact.type !== 'tel:' ? '_blank' : ''">
-                                {{ contact.value }}</a>
-                        </p>
-                        <button class="resume-editor-link">Редактировать</button>
+                        <div class="content">
+                            <h4 class="title">Контакты</h4>
+                            <ul>
+                                <li v-for="(contact, index) in contactEdit.list.array" :key="index">
+                                    <div class="content">
+                                        <div class="contact">
+                                            <span class="contact-name">{{ contact.name }}: </span>
+                                            <a class="contact-link" :href="contact.type + contact.value"
+                                                :target="contact.type !== 'tel:' ? '_blank' : ''">{{ contact.value }}</a>
+                                        </div>
+                                        <div class="todo-editor" v-if="contactChange">
+                                            <button v-html="icons.trash" class="editor-button"
+                                                @click="contactEdit.list.delete('id', contact.id)"></button>
+                                            <button v-html="icons.edit" class="editor-button"
+                                                @click="contactEdit.modal.value = contact"></button>
+                                            <button v-html="icons.chevronUp" class="editor-button"></button>
+                                            <button v-html="icons.chevronDown" class="editor-button"></button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li v-if="contactChange">
+                                    <button class="custom-btn" size="small">
+                                        <p text>Добавить еще</p>
+                                        <div v-html="icons.plus" icon></div>
+                                    </button>
+                                </li>
+                            </ul>
+                            <!--  -->
+                            <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = null">
+                                <div class="modal-content">
+                                    <a-select :options="[
+                                        {
+                                            value: 'tel:',
+                                            label: 'Номер Телефона',
+                                        },
+                                        {
+                                            value: 'mailto:',
+                                            label: 'Email',
+                                        },
+                                        {
+                                            value: '',
+                                            label: 'Другое',
+                                        }
+                                    ]" style="width: 100%;" v-model:value="contactEdit.data.value.type"></a-select>
+                                </div>
+                            </Modal>
+                            <!--  -->
+                        </div>
+                        <!-- EDITING -->
+                        <button class="resume-editor-link" @click="contactChange = true"
+                            v-if="!contactChange">Редактировать</button>
+                        <EditorButtons v-if="contactChange" @save="resumeData.setContact()"
+                            @cancel="() => { resumeData.cancel('contact') }" />
                     </div>
 
                     <!------------------ SECTOR 3 ------------------->
@@ -114,7 +158,7 @@
                         <div class="content">
                             <h2 class="title">Ключевые навыки</h2>
 
-                            <ul class="user-skills" v-if="!skillsChange" v-memo="[skillsData]">
+                            <ul class="user-skills" v-if="!skillsChange" v-memo="[resumeData.skills.value]">
                                 <li class="skill" v-for="skill in resume.skills" :key="skill">
                                     <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
                                     <p class="skill-name text-block">{{ skillsIcons[skill.toLocaleLowerCase()] ?
@@ -125,7 +169,7 @@
 
                             <!-- EDITING -->
                             <a-select v-if="skillsChange" class="skills-select" style="width: 100%;" mode="tags"
-                                v-model:value="skillsData" autofocus v-memo="[skillsData]">
+                                v-model:value="resumeData.skills.value" autofocus v-memo="[resumeData.skills.value]">
                                 <a-select-option class="user-portfolio-scoped-style" v-for="el in Object.keys(skillsIcons)"
                                     :key="el" :value="el.toLocaleLowerCase()" :getPopupContainer="antParentNode">
                                     <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]?.icon"></div>
@@ -138,8 +182,8 @@
                             v-if="!skillsChange">Редактировать</button>
 
                         <EditorButtons v-if="skillsChange" justify-end
-                            @save="() => { resume['skills'] = skillsData; skillsChange = false }"
-                            @cancel="() => { skillsData = resume['skills'].map(el => el.toLocaleLowerCase()); skillsChange = false }" />
+                            @save="() => { resume['skills'] = resumeData.skills.value; skillsChange = false }"
+                            @cancel="() => { resumeData.skills.value = resume['skills'].map(el => el.toLocaleLowerCase()); skillsChange = false }" />
                     </div>
 
                     <!------------------ SECTOR 6 ------------------->
@@ -150,17 +194,17 @@
                         </div>
 
                         <div v-if="aboutMeChange">
-                            <ckeditor :editor="ClassicEditor" v-model="aboutMeData" v-memo="[aboutMeData]"></ckeditor>
+                            <ckeditor :editor="ClassicEditor" v-model="resumeData.aboutMe.value"
+                                v-memo="[resumeData.aboutMe.value]"></ckeditor>
                         </div>
 
                         <!-- EDITING -->
                         <button class="resume-editor-link" v-if="!aboutMeChange"
                             @click="aboutMeChange = true">Редактировать</button>
 
-
                         <EditorButtons v-if="aboutMeChange" justify-end
-                            @save="() => { resume['aboutMe'] = aboutMeData; aboutMeChange = false }"
-                            @cancel="() => { aboutMeData = resume['aboutMe']; aboutMeChange = false }" />
+                            @save="() => { resume['aboutMe'] = resumeData.aboutMe.value; aboutMeChange = false }"
+                            @cancel="() => { resumeData.aboutMe.value = resume['aboutMe']; aboutMeChange = false }" />
                     </div>
 
                     <hr class="break">
@@ -392,32 +436,70 @@
 <!-- ============================================================================================================================ -->
 
 <script lang="ts">
-import { defineComponent, Ref, watch } from "vue";
+import {
+    defineComponent,
+    Ref,
+    watch
+} from "vue";
 import "./style.scss";
-import { ref } from "vue";
-import { months, ResumeOptions, iUserResume } from "@/data/interfaces";
-import type { SelectProps } from 'ant-design-vue';
-import { icons, skillsIcons } from "@/assets/icons";
+import {
+    ref
+} from "vue";
+import {
+    months,
+    ResumeOptions,
+    iUserResume
+} from "@/data/interfaces";
+import type {
+    SelectProps
+} from 'ant-design-vue';
+import {
+    icons,
+    skillsIcons
+} from "@/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { UseTodo } from "@/hooks";
-import { EditorButtons } from "@/components/UI";
+import {
+    UseTodo
+} from "@/hooks";
+import {
+    EditorButtons,
+    Modal
+} from "@/components/UI";
 import * as dayjs from 'dayjs'
 
 export default defineComponent({
     name: 'Resume',
     components: {
-        EditorButtons
+        EditorButtons,
+        Modal,
     },
     setup() {
         const resume: iUserResume = {
             name: 'Чинбердиев Алишер Акромович',
             gender: 'M',
-            img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1694572856&h=E7td_zjiTfgT0gqyeFO6uw',
+            img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1695369688&h=mRmCuwvWeyD6bthyLJkKOA',
             dob: '1047582000000',
-            contact: [
-                { id: 1, name: 'phone', value: '+998 (97) 777-31-91', type: 'tel:', preferred: false },
-                { id: 2, name: 'gmail', value: 'alisherchinberdiyev1403@gmail.com', type: 'mailTo:', preferred: true },
-                { id: 3, name: 'telegram', value: 'https://t.me/alisher2552', type: '', preferred: false },
+            contact: [{
+                id: 1,
+                name: 'phone',
+                value: '+998 (97) 777-31-91',
+                type: 'tel:',
+                preferred: false
+            },
+            {
+                id: 2,
+                name: 'gmail',
+                value: 'alisherchinberdiyev1403@gmail.com',
+                type: 'mailTo:',
+                preferred: true
+            },
+            {
+                id: 3,
+                name: 'telegram',
+                value: 'https://t.me/alisher2552',
+                type: '',
+                preferred: false
+            },
             ],
             city: 'Tashkent',
             move: false,
@@ -425,7 +507,7 @@ export default defineComponent({
             position: 'Front-end Developer',
             specialization: ['Программист', 'разработчик'],
             salary: 400,
-            currency: '$',
+            currency: 'dollar',
             employment: 'part',
             schedule: 'flexible',
             skills: [
@@ -455,33 +537,93 @@ export default defineComponent({
                 'Vue-Router'
             ],
             aboutMe: `- Привет, меня зовут Алишер и я студент 4го курса в Сингапурском Университете. Здесь я 3 года изучал основы программирования.`,
-            portfolio: [
-                { title: 'My Project', description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`, img: 'https://colorlib.com/wp-content/uploads/sites/2/library-website-design-1.jpg' },
-                { title: 'My Vue Project', description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`, img: 'https://colorlib.com/wp/wp-content/uploads/sites/2/portfolio-website-builders.jpg' },
-                { title: 'My React Project', description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`, img: 'https://cdn.dribbble.com/userupload/4060584/file/original-a2dcb88a24da79db509636a26cd98052.png?resize=400x0' },
-                { title: 'My React Project, lorem ipsum dolor site amet', description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`, img: 'https://i.pinimg.com/564x/2d/a5/bf/2da5bff0fa28e5256b1f22a15c3ba70b.jpg' },
+            portfolio: [{
+                title: 'My Project',
+                description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
+                img: 'https://colorlib.com/wp-content/uploads/sites/2/library-website-design-1.jpg'
+            },
+            {
+                title: 'My Vue Project',
+                description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
+                img: 'https://colorlib.com/wp/wp-content/uploads/sites/2/portfolio-website-builders.jpg'
+            },
+            {
+                title: 'My React Project',
+                description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
+                img: 'https://cdn.dribbble.com/userupload/4060584/file/original-a2dcb88a24da79db509636a26cd98052.png?resize=400x0'
+            },
+            {
+                title: 'My React Project, lorem ipsum dolor site amet',
+                description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
+                img: 'https://i.pinimg.com/564x/2d/a5/bf/2da5bff0fa28e5256b1f22a15c3ba70b.jpg'
+            },
             ],
-            education: [
-                { degree: 'bachelor', institution: 'MDIS Tashkent', faculty: 'Computer Information', specialization: 'IT', graduatedAt: '2024', location: 'Uzbekistan, Tashkent' },
-                { degree: 'bachelor', institution: 'MDIS Tashkent', faculty: 'Computer Information', specialization: 'IT', graduatedAt: '2024', location: 'Uzbekistan, Tashkent' },
+            education: [{
+                degree: 'bachelor',
+                institution: 'MDIS Tashkent',
+                faculty: 'Computer Information',
+                specialization: 'IT',
+                graduatedAt: '2024',
+                location: 'Uzbekistan, Tashkent'
+            },
+            {
+                degree: 'bachelor',
+                institution: 'MDIS Tashkent',
+                faculty: 'Computer Information',
+                specialization: 'IT',
+                graduatedAt: '2024',
+                location: 'Uzbekistan, Tashkent'
+            },
             ],
             motherLang: 'Uzbek',
-            languages: [
-                { name: 'english', level: 'b2' },
-                { name: 'russian', level: 'b1' },
+            languages: [{
+                name: 'english',
+                level: 'b2'
+            },
+            {
+                name: 'russian',
+                level: 'b1'
+            },
             ],
-            courses: [
-                { name: 'Web Development', organization: 'Proweb', specialization: 'Frontend', graduatedAt: '2023', location: 'Uzbekistan, Tashkent' },
-                { name: 'Python Programming', organization: 'Proweb', specialization: 'Backend', graduatedAt: '2023', location: 'Uzbekistan, Tashkent' },
+            courses: [{
+                name: 'Web Development',
+                organization: 'Proweb',
+                specialization: 'Frontend',
+                graduatedAt: '2023',
+                location: 'Uzbekistan, Tashkent'
+            },
+            {
+                name: 'Python Programming',
+                organization: 'Proweb',
+                specialization: 'Backend',
+                graduatedAt: '2023',
+                location: 'Uzbekistan, Tashkent'
+            },
             ],
-            certificates: [
-                { name: 'MDIS Tashkent', img: 'https://edit.org/images/cat/diplomas-certificates-big-2020042416.jpg' },
-                { name: 'Proweb', img: 'https://img.freepik.com/premium-vector/diploma-certificate-template_23-2148569141.jpg' },
+            certificates: [{
+                name: 'MDIS Tashkent',
+                img: 'https://edit.org/images/cat/diplomas-certificates-big-2020042416.jpg'
+            },
+            {
+                name: 'Proweb',
+                img: 'https://img.freepik.com/premium-vector/diploma-certificate-template_23-2148569141.jpg'
+            },
             ],
-            career: [
-                { year: '2014', name: 'First Programming', description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications' },
-                { year: '2020', name: 'Mdis Tashkent entrance', description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications' },
-                { year: '2023', name: 'Prowen Edicaton Center', description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications' },
+            career: [{
+                year: '2014',
+                name: 'First Programming',
+                description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications'
+            },
+            {
+                year: '2020',
+                name: 'Mdis Tashkent entrance',
+                description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications'
+            },
+            {
+                year: '2023',
+                name: 'Prowen Edicaton Center',
+                description: 'The first computer programming course I have, there I learnt basics of Microsoft Office Applications'
+            },
             ],
             citizenship: ['Узбекистан'],
             workPermission: ['Узбекистан', 'Россия'],
@@ -491,53 +633,60 @@ export default defineComponent({
         }
 
         /**
-        * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
-        */
+         * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
+         */
 
         const langOptionsValue = ref<string>(resume.langSelected)
-        const langOptions = ref<SelectProps['options']>([
-            {
-                value: 'rus',
-                label: 'Русский'
-            },
-            {
-                value: 'eng',
-                label: 'English'
-            }
+        const langOptions = ref<SelectProps['options']>([{
+            value: 'rus',
+            label: 'Русский'
+        },
+        {
+            value: 'eng',
+            label: 'English'
+        }
         ]);
 
         const visiblityOptionsValue = ref<string>('all');
-        const visiblityOptions = ref<SelectProps['options']>([
-            {
-                value: 'all',
-                label: 'Видно всем'
-            },
-            {
-                value: 'selected_companies',
-                label: 'Видно выбранным компаниям'
-            },
-            {
-                value: 'selected_companies_hidden',
-                label: 'Скрыто от выбранных компаний'
-            },
-            {
-                value: 'only_links',
-                label: 'Видно только по прямой ссылке'
-            },
-            {
-                value: 'none',
-                label: 'Не видно никому'
-            }
+        const visiblityOptions = ref<SelectProps['options']>([{
+            value: 'all',
+            label: 'Видно всем'
+        },
+        {
+            value: 'selected_companies',
+            label: 'Видно выбранным компаниям'
+        },
+        {
+            value: 'selected_companies_hidden',
+            label: 'Скрыто от выбранных компаний'
+        },
+        {
+            value: 'only_links',
+            label: 'Видно только по прямой ссылке'
+        },
+        {
+            value: 'none',
+            label: 'Не видно никому'
+        }
         ]);
 
         /**
-        * ! ------------------------------ RESUME EDITING BOOLEAN STATES ---------------------------------- !
-        */
+         * ! ------------------------------ RESUME EDITING BOOLEAN STATES ---------------------------------- !
+         */
 
         const completed = ref<number>(65);
-        const portfolioCheckout = ref<{ title: string, description: string, img: string } | null>(null);
 
-        function portfolioDialog(portfolio: { title: string, description: string, img: string } | null): void {
+        const portfolioCheckout = ref<{
+            title: string,
+            description: string,
+            img: string
+        } | null>(null);
+
+        function portfolioDialog(portfolio: {
+            title: string,
+            description: string,
+            img: string
+        } | null): void {
             document.body.style.overflow = portfolio == null ? 'auto' : 'hidden';
             portfolioCheckout.value = portfolio;
         }
@@ -545,12 +694,9 @@ export default defineComponent({
         const calculatedDob = ref<number>();
 
         const faqChange = ref<boolean>(false);
-
-        const skillsData = ref<Array<string>>([...resume.skills].map(el => el.toLocaleLowerCase()));
         const skillsChange = ref<boolean>(false);
-
-        const aboutMeData = ref<string>(resume.aboutMe);
         const aboutMeChange = ref<boolean>(false);
+        const contactChange = ref<boolean>(false);
 
         const antParentNode = (trigger: any): void => trigger.parentNode;
 
@@ -560,17 +706,24 @@ export default defineComponent({
             }
         })
 
+
         /**
-        * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
-        */
+         * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
+         */
 
         class ResumeData {
             gender: Ref;
             dob: Ref;
+            skills: Ref;
+            aboutMe: Ref;
+            contact: Ref;
 
             constructor() {
                 this.gender = ref<'M' | 'F' | null>(resume.gender);
                 this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.dob), 'DD/MM/YYYY'));
+                this.skills = ref<Array<string>>([...resume.skills].map(el => el.toLocaleLowerCase()));
+                this.aboutMe = ref<string>(resume.aboutMe);
+                this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.contact);
             }
 
             public setFaq() {
@@ -580,12 +733,19 @@ export default defineComponent({
                 getAge();
             }
 
+            public setContact(): void {
+                contactChange.value = false;
+            }
+
             public cancel(method: string): void {
                 const cancelMethods = {
                     faq: (): void => {
                         resumeData.gender.value = resume['gender'];
                         resumeData.dob.value = dayjs(dayjs(+resume.dob), 'DD/MM/YYYY');
                         faqChange.value = false;
+                    },
+                    contact: (): void => {
+                        contactChange.value = false;
                     }
                 }
                 type ObjectKey = keyof typeof cancelMethods;
@@ -596,12 +756,13 @@ export default defineComponent({
 
         const resumeData = new ResumeData();
 
-        console.log({ ...new ResumeData() });
-
+        console.log({
+            ...new ResumeData()
+        });
 
         /**
-        * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
-        */
+         * ! ------------------------------------- OTHER ADDITIONAL STATES --------------------------------------- !
+         */
 
         function getAge(): void {
             const d = new Date();
@@ -609,10 +770,15 @@ export default defineComponent({
             calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
         }
 
+        const contactEdit = {
+            list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
+            modal: ref<object | null>(null),
+            data: ref<{ type: string }>({ type: '' }),
+        }
 
         /**
-        * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
-        */
+         * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
+         */
         return {
             resume,
             months,
@@ -628,20 +794,20 @@ export default defineComponent({
             portfolioDialog,
             calculatedDob,
             faqChange,
-            skillsData,
             skillsChange,
             ClassicEditor,
-            aboutMeData,
             aboutMeChange,
+            contactChange,
             antParentNode,
             dayjs,
             resumeData,
             getAge,
+            contactEdit,
         }
     },
     /**
-    * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
-    */
+     * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
+     */
     mounted() {
         this.getAge();
     },

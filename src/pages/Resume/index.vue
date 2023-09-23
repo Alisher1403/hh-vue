@@ -511,7 +511,7 @@ export default defineComponent({
         Modal,
     },
     setup() {
-        const resume: iUserResume = {
+        const resume = ref<iUserResume>({
             name: 'Чинбердиев Алишер Акромович',
             gender: 'M',
             img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1695369688&h=mRmCuwvWeyD6bthyLJkKOA',
@@ -667,7 +667,7 @@ export default defineComponent({
             travel: '1.30',
             car: '',
             langSelected: 'rus',
-        }
+        });
 
         /**
          * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
@@ -736,13 +736,6 @@ export default defineComponent({
         const contactChange = ref<boolean>(false);
 
         const antParentNode = (trigger: any): void => trigger.parentNode;
-
-        watch(faqChange, (data) => {
-            if (!faqChange.value) {
-                console.log(data);
-            }
-        })
-
 
         /**
          * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
@@ -827,6 +820,16 @@ export default defineComponent({
         function canceContactlEdit(): void {
             contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
         }
+
+        /**
+        * ? ---------------------- BUILT IN VUE METHODS --------------------------- ?
+        */
+
+        watch(faqChange, (data) => {
+            if (!faqChange.value) {
+                console.log(data);
+            }
+        })
 
         onMounted(() => {
             getAge();

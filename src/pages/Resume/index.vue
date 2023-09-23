@@ -673,7 +673,7 @@ export default defineComponent({
          * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
          */
 
-        const langOptionsValue = ref<string>(resume.langSelected)
+        const langOptionsValue = ref<string>(resume.value.langSelected)
         const langOptions = ref<SelectProps['options']>([{
             value: 'rus',
             label: 'Русский'
@@ -749,16 +749,16 @@ export default defineComponent({
             contact: Ref;
 
             constructor() {
-                this.gender = ref<'M' | 'F' | null>(resume.gender);
-                this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.dob), 'DD/MM/YYYY'));
-                this.skills = ref<Array<string>>([...resume.skills].map(el => el.toLocaleLowerCase()));
-                this.aboutMe = ref<string>(resume.aboutMe);
+                this.gender = ref<'M' | 'F' | null>(resume.value.gender);
+                this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY'));
+                this.skills = ref<Array<string>>([...resume.value.skills].map(el => el.toLocaleLowerCase()));
+                this.aboutMe = ref<string>(resume.value.aboutMe);
                 this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.contact);
             }
 
             public setFaq() {
-                resume.gender = this.gender.value;
-                resume.dob = `${dayjs(this.dob.value).unix() * 1000}`;
+                resume.value.gender = this.gender.value;
+                resume.value.dob = `${dayjs(this.dob.value).unix() * 1000}`;
                 faqChange.value = false;
                 getAge();
             }
@@ -770,8 +770,8 @@ export default defineComponent({
             public cancel(method: string): void {
                 const cancelMethods = {
                     faq: (): void => {
-                        resumeData.gender.value = resume['gender'];
-                        resumeData.dob.value = dayjs(dayjs(+resume.dob), 'DD/MM/YYYY');
+                        resumeData.gender.value = resume.value['gender'];
+                        resumeData.dob.value = dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY');
                         faqChange.value = false;
                     },
                     contact: (): void => {
@@ -796,7 +796,7 @@ export default defineComponent({
 
         function getAge(): void {
             const d = new Date();
-            const birthDay = new Date(+resume.dob);
+            const birthDay = new Date(+resume.value.dob);
             calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
         }
 

@@ -753,7 +753,7 @@ export default defineComponent({
                 this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY'));
                 this.skills = ref<Array<string>>([...resume.value.skills].map(el => el.toLocaleLowerCase()));
                 this.aboutMe = ref<string>(resume.value.aboutMe);
-                this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.contact);
+                this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.value.contact);
             }
 
             public setFaq() {

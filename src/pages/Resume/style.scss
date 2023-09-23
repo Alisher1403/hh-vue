@@ -1,7 +1,6 @@
 @import "@/assets/style.scss";
 
 /************************************************************/
-$text-size: 15px;
 $break-width: 0.5px;
 $break-point-size: 5px;
 $skills-height: 40px;
@@ -31,7 +30,7 @@ $skills-height: 40px;
     margin-left: 10px;
 
     $pointer-width: 10px;
-    $pointer-margin: 4px;
+    $pointer-margin: calc(var(--paragraph-size) - 9px);
 
     &::before {
       content: "";
@@ -243,7 +242,7 @@ $skills-height: 40px;
                 .contact-link {
                   @include text();
                   @include link-style();
-                  font-size: calc($text-size - 1px);
+                  font-size: calc(var(--paragraph-size) - 1px);
 
                   &:hover {
                     color: rgb(216, 0, 0);
@@ -272,12 +271,12 @@ $skills-height: 40px;
 
           .user-salary {
             @include text();
-            font-size: calc($text-size + 5px);
+            font-size: calc(var(--paragraph-size) + 5px);
             margin-bottom: 10px;
 
             span {
               @include text();
-              font-size: calc($text-size + 6px);
+              font-size: calc(var(--paragraph-size) + 6px);
               font-family: var(--font-semiBold);
             }
           }

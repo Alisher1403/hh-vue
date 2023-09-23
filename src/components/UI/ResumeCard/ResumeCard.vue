@@ -35,8 +35,11 @@
             </div>
 
             <div class="btns">
-                <button class="btn">Поднять в поиске</button>
-                <button class="btn" white><span>{{ store.state.recommendedVacancies.length }}</span> вакансии</button>
+                <button class="custom-btn unrounded">Поднять в поиске</button>
+                <button class="custom-btn unrounded" white>
+                    <span>{{ store.state.recommendedVacancies.length }}</span>
+                    вакансии
+                </button>
             </div>
 
             <ul class="links">
@@ -158,12 +161,8 @@ export default defineComponent({
 
         .btns {
             display: flex;
-            column-gap: 12px;
+            column-gap: 8px;
             margin-bottom: 20px;
-
-            .btn {
-                @include custom-btn();
-            }
         }
 
         .links {

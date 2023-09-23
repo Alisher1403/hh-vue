@@ -67,15 +67,17 @@
                                 <li v-for="(contact, index) in contactEdit.list.array" :key="index">
                                     <div class="content">
                                         <div class="contact">
-                                            <span class="contact-name">{{ contact.name }}: </span>
+                                            <span class="contact-name">{{ contact.name }}</span>:
                                             <a class="contact-link" :href="contact.type + contact.value"
                                                 :target="contact.type !== 'tel:' ? '_blank' : ''">{{ contact.value }}</a>
+                                            <span class="text-block" v-if="contact.preferred"> — предпочитаемый способ
+                                                связи</span>
                                         </div>
                                         <div class="todo-editor" v-if="contactChange">
                                             <button v-html="icons.trash" class="editor-button"
                                                 @click="contactEdit.list.delete('id', contact.id)"></button>
                                             <button v-html="icons.edit" class="editor-button"
-                                                @click="contactEdit.modal.value = contact"></button>
+                                                @click="contactEdit.modal.value = true, contactEdit.data = contact"></button>
                                             <button v-html="icons.chevronUp" class="editor-button"></button>
                                             <button v-html="icons.chevronDown" class="editor-button"></button>
                                         </div>
@@ -89,22 +91,56 @@
                                 </li>
                             </ul>
                             <!--  -->
-                            <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = null">
+                            <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = false"
+                                :title="'Контакт'">
                                 <div class="modal-content">
-                                    <a-select :options="[
-                                        {
-                                            value: 'tel:',
-                                            label: 'Номер Телефона',
-                                        },
-                                        {
-                                            value: 'mailto:',
-                                            label: 'Email',
-                                        },
-                                        {
-                                            value: '',
-                                            label: 'Другое',
-                                        }
-                                    ]" style="width: 100%;" v-model:value="contactEdit.data.value.type"></a-select>
+                                    <a-row :gutter="10">
+                                        <a-col flex="100px">
+                                            <h4 class="input-subtitle input-subtitle-margin">Название</h4>
+                                            <a-input v-model:value="contactEdit.data.name" placeholder="Название"></a-input>
+                                        </a-col>
+                                        <a-col flex="auto">
+                                            <h4 class="input-subtitle input-subtitle-margin">Ссылка на сайт</h4>
+                                            <a-input v-model:value="contactEdit.data.value" placeholder="Ссылка"></a-input>
+                                        </a-col>
+                                    </a-row>
+
+                                    <div>
+                                        <h4 class="input-subtitle input-subtitle-margin">Тип связи</h4>
+                                        <a-select :options="[
+                                            {
+                                                value: 'tel:',
+                                                label: 'Номер Телефона',
+                                            },
+                                            {
+                                                value: 'mailto:',
+                                                label: 'Email',
+                                            },
+                                            {
+                                                value: '',
+                                                label: 'Другое',
+                                            }
+                                        ]" style="width: 100%;" v-model:value="contactEdit.data.type"></a-select>
+                                    </div>
+
+                                    <a-row :gutter="10" :align="'middle'">
+                                        <a-col>
+                                            <h4 class="input-subtitle">Предпочтительный вид связи</h4>
+                                        </a-col>
+                                        <a-col>
+                                            <a-switch v-model:checked="contactEdit.data.preferred"></a-switch>
+                                        </a-col>
+                                    </a-row>
+
+                                    <a-row justify="end" :gutter="5">
+                                        <a-col>
+                                            <button class="custom-btn btn-unrounded" style="width: 90px;">Save</button>
+                                        </a-col>
+                                        <a-col>
+                                            <button class="custom-btn btn-unrounded" white
+                                                style="width: 90px;">Cancel</button>
+                                        </a-col>
+                                    </a-row>
                                 </div>
                             </Modal>
                             <!--  -->
@@ -490,7 +526,7 @@ export default defineComponent({
                 id: 2,
                 name: 'gmail',
                 value: 'alisherchinberdiyev1403@gmail.com',
-                type: 'mailTo:',
+                type: 'mailto:',
                 preferred: true
             },
             {
@@ -772,8 +808,23 @@ export default defineComponent({
 
         const contactEdit = {
             list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
-            modal: ref<object | null>(null),
-            data: ref<{ type: string }>({ type: '' }),
+            modal: ref<boolean>(false),
+            data: ref<{ id: number, name: string, value: string, type: string, preferred: boolean }>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
+        }
+
+        class UseTodoExtended extends UseTodo {
+            public modal: boolean;
+            constructor(args: { list: any[], bool?: boolean }) {
+                super(args.list);
+                this.modal = args.bool || false;
+            }
+        }
+
+        console.log(new UseTodoExtended({ list: contactEdit.list.array, bool: false }));
+
+
+        function canceContactlEdit(): void {
+            contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
         }
 
         /**
@@ -803,6 +854,7 @@ export default defineComponent({
             resumeData,
             getAge,
             contactEdit,
+            canceContactlEdit,
         }
     },
     /**

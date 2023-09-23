@@ -1,21 +1,35 @@
 <template>
     <div class="modal" v-if="open">
         <div class="modal-bg" @click="$emit('onClose')"></div>
-        <slot @click.stop></slot>
+        <div class="modal-container" v-if="title">
+            <div class="modal-title-wrapper">
+                <div class="modal-title">{{ title }}</div>
+                <button class="modal-btn" v-html="icons.x" @click="$emit('onClose')"></button>
+            </div>
+            <slot @click.stop></slot>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { icons } from "@/assets/icons";
+import { defineComponent, watch } from "vue";
 
 export default defineComponent({
     name: 'Modal',
     props: {
         open: null,
+        title: String,
     },
     setup(props) {
-        document.body.style.overflow = props.open ? 'hidden' : 'auto';
-    }
+        watch(() => props.open, (newState) => {
+            document.body.style.overflow = newState ? 'hidden' : 'auto';
+        });
+
+        return {
+            icons
+        }
+    },
 });
 </script>
 
@@ -38,6 +52,8 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
 
+    $border-radius: 10px;
+
     @keyframes modal-animation {
         100% {
             visibility: visible;
@@ -57,11 +73,56 @@ export default defineComponent({
         z-index: -1;
     }
 
-    .modal-content {
+    .modal-container {
         background: white;
-        border-radius: 10px;
-        padding: 20px;
-        width: 500px;
+        border-radius: $border-radius;
+        padding: 5px;
+        overflow: hidden;
+
+        .modal-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 25px;
+            background: var(--element-background);
+            border-radius: calc($border-radius - 2.5px);
+            height: 100%;
+
+            .modal-title {
+                font-size: 15px;
+                font-family: var(--font-semibold);
+                color: white;
+            }
+
+            .modal-btn {
+                @include rm-default();
+                height: 15px;
+                cursor: pointer;
+
+                &:hover {
+                    svg {
+                        fill: rgb(214, 214, 214);
+                        stroke: rgb(214, 214, 214);
+                    }
+                }
+
+                svg {
+                    fill: white;
+                    stroke: white;
+                }
+            }
+        }
+
+        .modal-content {
+            padding: 18px 25px;
+            max-width: 600px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            row-gap: 15px;
+            border-left: none;
+            border-right: none;
+        }
     }
 }
 </style>

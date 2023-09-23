@@ -8,7 +8,7 @@
                     <!------------------ SECTOR 1 ------------------->
                     <div class="resume-sector-1 sector">
                         <div class="left">
-                            <h1 class="user-name title">{{ resume.name }}</h1>
+                            <h1 class="user-name title">{{ resume.userName }}</h1>
 
                             <div class="user-date" v-if="!faqChange">
                                 <span v-if="resume.gender">
@@ -512,9 +512,9 @@ export default defineComponent({
     },
     setup() {
         const resume = ref<iUserResume>({
-            name: 'Чинбердиев Алишер Акромович',
+            userName: 'Чинбердиев Алишер Акромович',
             gender: 'M',
-            img: 'https://img.hhcdn.ru/photo/730478762.jpeg?t=1695369688&h=mRmCuwvWeyD6bthyLJkKOA',
+            img: '',
             dob: '1047582000000',
             contact: [{
                 id: 1,

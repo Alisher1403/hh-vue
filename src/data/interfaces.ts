@@ -57,7 +57,7 @@ const ResumeOptions: any = {
 export { ResumeOptions };
 
 export interface iUserResume {
-  name: string;
+  userName: string;
   gender: "M" | "F" | null;
   img: string;
   dob: string;

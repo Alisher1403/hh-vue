@@ -3,7 +3,7 @@
         <div class="content">
 
             <h2 class="title">
-                <router-link to="/resumeEditor/25">{{ resume.title }}</router-link>
+                <router-link to="/resume-edit/25">{{ resume.title }}</router-link>
             </h2>
 
             <p class="updated">Обновлено
@@ -45,7 +45,7 @@
             <ul class="links">
                 <li class="link"><router-link to="/">Поднять в поиске</router-link></li>
                 <li class="link"><router-link to="/">Изменить видимость</router-link></li>
-                <li class="link"><router-link to="/resumeEditor">Редактировать</router-link></li>
+                <li class="link"><router-link to="/resume-editor">Редактировать</router-link></li>
                 <li class="link"><router-link to="/">Дублировать</router-link></li>
             </ul>
 

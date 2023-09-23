@@ -474,6 +474,7 @@
 <script lang="ts">
 import {
     defineComponent,
+    onMounted,
     Ref,
     watch
 } from "vue";
@@ -827,6 +828,10 @@ export default defineComponent({
             contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
         }
 
+        onMounted(() => {
+            getAge();
+        })
+
         /**
          * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
          */
@@ -856,12 +861,10 @@ export default defineComponent({
             contactEdit,
             canceContactlEdit,
         }
+
     },
     /**
      * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
      */
-    mounted() {
-        this.getAge();
-    },
 })
 </script>

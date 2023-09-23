@@ -766,7 +766,7 @@ export default defineComponent({
                 resume.gender = this.gender.value;
                 resume.dob = `${dayjs(this.dob.value).unix() * 1000}`;
                 faqChange.value = false;
-                // getAge();
+                getAge();
             }
 
             public setContact(): void {

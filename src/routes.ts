@@ -6,7 +6,7 @@ import Resume from "./pages/Resume/index.vue";
 const routes = [
   { path: "/", default: true, component: MainPage },
   { path: "/resume", component: ResumePage },
-  { path: "/resume-editor/:id", component: Resume },
+  { path: "/resumeEditor/:id", component: Resume },
 ];
 
 export const router = createRouter({

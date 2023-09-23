@@ -502,7 +502,6 @@ import {
     Modal
 } from "@/components/UI";
 import * as dayjs from 'dayjs'
-import { useStore } from "@/data/store";
 
 export default defineComponent({
     name: 'Resume',
@@ -511,8 +510,6 @@ export default defineComponent({
         Modal,
     },
     setup() {
-        const store = useStore();
-
         const resume: iUserResume = {
             userName: 'Чинбердиев Алишер Акромович',
             gender: 'M',

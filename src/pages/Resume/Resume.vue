@@ -1,5 +1,4 @@
 <template>
-    RESUMEEE
     {{ resume }}
 </template>
 

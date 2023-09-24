@@ -11,9 +11,6 @@
                                 <span v-if="resume.gender">
                                     {{ resume.gender == 'M' ? 'Мужчина, ' :
                                         resume.gender == 'F' ? 'Женщина, ' : null }}</span>
-                                <span>{{ calculatedDob }}
-                                    лет</span>,
-
                             </div>
 
                             <!-- EDITING -->
@@ -312,7 +309,6 @@ export default defineComponent({
             portfolioCheckout.value = portfolio;
         }
 
-        const calculatedDob = ref<number>();
 
         const faqChange = ref<boolean>(false);
         const skillsChange = ref<boolean>(false);
@@ -327,7 +323,6 @@ export default defineComponent({
 
         class ResumeData {
             gender: Ref;
-            dob: Ref;
             skills: Ref;
             aboutMe: Ref;
             contact: Ref;
@@ -344,7 +339,7 @@ export default defineComponent({
                 resume.value.gender = this.gender.value;
 
                 faqChange.value = false;
-                getAge();
+
             }
 
             public setContact(): void {
@@ -378,11 +373,6 @@ export default defineComponent({
          * ! ------------------------------------- OTHER ADDITIONAL STATES --------------------------------------- !
          */
 
-        function getAge(): void {
-            const d = new Date();
-            const birthDay = new Date(+resume.value.dob);
-            calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
-        }
 
         const contactEdit = {
             list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
@@ -415,9 +405,6 @@ export default defineComponent({
             }
         })
 
-        onMounted(() => {
-            getAge();
-        })
 
         /**
          * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
@@ -435,7 +422,6 @@ export default defineComponent({
             completed,
             portfolioCheckout,
             portfolioDialog,
-            calculatedDob,
             faqChange,
             skillsChange,
             ClassicEditor,
@@ -444,7 +430,6 @@ export default defineComponent({
             antParentNode,
 
             resumeData,
-            getAge,
             contactEdit,
             canceContactlEdit,
         }

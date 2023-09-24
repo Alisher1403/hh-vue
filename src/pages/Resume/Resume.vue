@@ -13,11 +13,7 @@
                                         resume.gender == 'F' ? 'Женщина, ' : null }}</span>
                                 <span>{{ calculatedDob }}
                                     лет</span>,
-                                <span v-if="resumeData.dob.value">родился
-                                    {{ dayjs(resumeData.dob.value).date() }}
-                                    {{ months.rus[dayjs(resumeData.dob.value).month()] }}
-                                    {{ dayjs(resumeData.dob.value).year() }}
-                                </span>
+
                             </div>
 
                             <!-- EDITING -->
@@ -91,7 +87,6 @@ import {
     EditorButtons,
     Modal
 } from "@/components/UI";
-import * as dayjs from 'dayjs'
 
 export default defineComponent({
     name: 'Resume',
@@ -339,7 +334,7 @@ export default defineComponent({
 
             constructor() {
                 this.gender = ref<string | null>(resume.value.gender);
-                this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY'));
+
                 this.skills = ref<Array<string>>([...resume.value.skills].map(el => el.toLocaleLowerCase()));
                 this.aboutMe = ref<string>(resume.value.aboutMe);
                 this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.value.contact);
@@ -347,7 +342,7 @@ export default defineComponent({
 
             public setFaq() {
                 resume.value.gender = this.gender.value;
-                resume.value.dob = `${dayjs(this.dob.value).unix() * 1000}`;
+
                 faqChange.value = false;
                 getAge();
             }
@@ -360,7 +355,7 @@ export default defineComponent({
                 const cancelMethods = {
                     faq: (): void => {
                         resumeData.gender.value = resume.value['gender'];
-                        resumeData.dob.value = dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY');
+
                         faqChange.value = false;
                     },
                     contact: (): void => {
@@ -447,7 +442,7 @@ export default defineComponent({
             aboutMeChange,
             contactChange,
             antParentNode,
-            dayjs,
+
             resumeData,
             getAge,
             contactEdit,

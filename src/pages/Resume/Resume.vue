@@ -12,11 +12,6 @@
                                         resume.gender == 'F' ? 'Женщина, ' : null }}</span>
                                 <span>{{ calculatedDob }}
                                     лет</span>,
-                                <span v-if="resumeData.dob.value">родился
-                                    {{ dayjs(resumeData.dob.value).date() }}
-                                    {{ months.rus[dayjs(resumeData.dob.value).month()] }}
-                                    {{ dayjs(resumeData.dob.value).year() }}
-                                </span>
                             </div>
                         </div>
                     </div>
@@ -28,8 +23,7 @@
 
 <script lang="ts">
 import { iUserResume, months } from "@/data/interfaces";
-import * as dayjs from "dayjs";
-import { defineComponent, onMounted, Ref, ref } from "vue";
+import { defineComponent, Ref, ref } from "vue";
 
 export default defineComponent({
     name: 'Resume',
@@ -195,42 +189,28 @@ export default defineComponent({
         const faqChange = ref<boolean>(false);
         const calculatedDob = ref<number>();
 
-        function getCalculatedAge(): void {
-            const d = new Date();
-            const birthDay = new Date(+resume.value.dob);
-            calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
-        }
+        // function getCalculatedAge(): void {
+        //     const d = new Date();
+        //     const birthDay = new Date(+resume.value.dob);
+        //     calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
+        // }
 
         class ResumeData {
             gender: Ref;
-            dob: Ref;
 
             constructor() {
                 this.gender = ref<'M' | 'F' | null>(resume.value.gender);
-                this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY'));
-            }
-
-            public setFaq() {
-                resume.value.gender = this.gender.value;
-                resume.value.dob = `${dayjs(this.dob.value).unix() * 1000}`;
-                faqChange.value = false;
-                getCalculatedAge();
             }
 
         }
 
         const resumeData = new ResumeData();
 
-        onMounted(() => {
-            getCalculatedAge();
-        });
-
         return {
             resume,
             faqChange,
             calculatedDob,
             resumeData,
-            dayjs,
             months,
         }
     }

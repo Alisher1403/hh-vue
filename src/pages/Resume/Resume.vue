@@ -74,7 +74,7 @@ import {
 import {
     months,
     ResumeOptions,
-    iUserResume
+    // iUserResume
 } from "@/data/interfaces";
 import type {
     SelectProps
@@ -100,7 +100,7 @@ export default defineComponent({
         Modal,
     },
     setup() {
-        const resume = ref<iUserResume>({
+        const resume = ref({
             userName: 'Чинбердиев Алишер Акромович',
             gender: 'M',
             img: '',
@@ -338,7 +338,7 @@ export default defineComponent({
             contact: Ref;
 
             constructor() {
-                this.gender = ref<'M' | 'F' | null>(resume.value.gender);
+                this.gender = ref<string | null>(resume.value.gender);
                 this.dob = ref<dayjs.Dayjs | null>(dayjs(dayjs(+resume.value.dob), 'DD/MM/YYYY'));
                 this.skills = ref<Array<string>>([...resume.value.skills].map(el => el.toLocaleLowerCase()));
                 this.aboutMe = ref<string>(resume.value.aboutMe);

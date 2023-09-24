@@ -7,45 +7,6 @@
                         <div class="left">
                             <h1 class="user-name title">{{ resume.userName }}</h1>
 
-                            <div class="user-date" v-if="!faqChange">
-                                <span v-if="resume.gender">
-                                    {{ resume.gender == 'M' ? 'Мужчина, ' :
-                                        resume.gender == 'F' ? 'Женщина, ' : null }}</span>
-                            </div>
-
-                            <!-- EDITING -->
-                            <div class="edit user-date-edit" v-if="faqChange">
-                                <a-select :options="[
-                                    {
-                                        value: null,
-                                        label: '...'
-                                    },
-                                    {
-                                        value: 'M',
-                                        label: 'Мужчина'
-                                    },
-                                    {
-                                        value: 'F',
-                                        label: 'Женщина'
-                                    },
-                                ]" v-model:value="resumeData.gender.value" style="width: 120px;">
-                                </a-select>
-
-                                <a-date-picker v-model:value="resumeData.dob.value" :format="'DD.MM.YYYY'" />
-                            </div>
-
-                            <!-- EDITING -->
-                            <button class="resume-editor-link" v-if="!faqChange"
-                                @click="faqChange = true">Редактировать</button>
-
-                            <EditorButtons v-if="faqChange" @save="resumeData.setFaq()"
-                                @cancel="() => { resumeData.cancel('faq') }" />
-                        </div>
-
-                        <div class="right">
-                            <router-link to="" class="resume-editor-link">
-                                <img :src="resume.img" class="user-image" alt="">
-                            </router-link>
                         </div>
                     </div>
                 </div>
@@ -55,44 +16,13 @@
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    onMounted,
-    Ref,
-    watch
-} from "vue";
-import {
-    ref
-} from "vue";
-import {
-    months,
-    ResumeOptions,
-    // iUserResume
-} from "@/data/interfaces";
-import type {
-    SelectProps
-} from 'ant-design-vue';
-import {
-    icons,
-    skillsIcons
-} from "@/assets/icons";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import {
-    UseTodo
-} from "@/hooks";
-import {
-    EditorButtons,
-    Modal
-} from "@/components/UI";
+import { iUserResume } from "@/data/interfaces";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
     name: 'Resume',
-    components: {
-        EditorButtons,
-        Modal,
-    },
     setup() {
-        const resume = ref({
+        const resume = ref<iUserResume>({
             userName: 'Чинбердиев Алишер Акромович',
             gender: 'M',
             img: '',
@@ -250,194 +180,10 @@ export default defineComponent({
             langSelected: 'rus',
         });
 
-        /**
-         * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
-         */
-
-        const langOptionsValue = ref<string>(resume.value.langSelected)
-        const langOptions = ref<SelectProps['options']>([{
-            value: 'rus',
-            label: 'Русский'
-        },
-        {
-            value: 'eng',
-            label: 'English'
-        }
-        ]);
-
-        const visiblityOptionsValue = ref<string>('all');
-        const visiblityOptions = ref<SelectProps['options']>([{
-            value: 'all',
-            label: 'Видно всем'
-        },
-        {
-            value: 'selected_companies',
-            label: 'Видно выбранным компаниям'
-        },
-        {
-            value: 'selected_companies_hidden',
-            label: 'Скрыто от выбранных компаний'
-        },
-        {
-            value: 'only_links',
-            label: 'Видно только по прямой ссылке'
-        },
-        {
-            value: 'none',
-            label: 'Не видно никому'
-        }
-        ]);
-
-        /**
-         * ! ------------------------------ RESUME EDITING BOOLEAN STATES ---------------------------------- !
-         */
-
-        const completed = ref<number>(65);
-
-        const portfolioCheckout = ref<{
-            title: string,
-            description: string,
-            img: string
-        } | null>(null);
-
-        function portfolioDialog(portfolio: {
-            title: string,
-            description: string,
-            img: string
-        } | null): void {
-            document.body.style.overflow = portfolio == null ? 'auto' : 'hidden';
-            portfolioCheckout.value = portfolio;
-        }
-
-
-        const faqChange = ref<boolean>(false);
-        const skillsChange = ref<boolean>(false);
-        const aboutMeChange = ref<boolean>(false);
-        const contactChange = ref<boolean>(false);
-
-        const antParentNode = (trigger: any): void => trigger.parentNode;
-
-        /**
-         * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
-         */
-
-        class ResumeData {
-            gender: Ref;
-            skills: Ref;
-            aboutMe: Ref;
-            contact: Ref;
-
-            constructor() {
-                this.gender = ref<string | null>(resume.value.gender);
-
-                this.skills = ref<Array<string>>([...resume.value.skills].map(el => el.toLocaleLowerCase()));
-                this.aboutMe = ref<string>(resume.value.aboutMe);
-                this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.value.contact);
-            }
-
-            public setFaq() {
-                resume.value.gender = this.gender.value;
-
-                faqChange.value = false;
-
-            }
-
-            public setContact(): void {
-                contactChange.value = false;
-            }
-
-            public cancel(method: string): void {
-                const cancelMethods = {
-                    faq: (): void => {
-                        resumeData.gender.value = resume.value['gender'];
-
-                        faqChange.value = false;
-                    },
-                    contact: (): void => {
-                        contactChange.value = false;
-                    }
-                }
-                type ObjectKey = keyof typeof cancelMethods;
-                const methodName = method as ObjectKey;
-                cancelMethods[methodName]();
-            }
-        }
-
-        const resumeData = new ResumeData();
-
-        console.log({
-            ...new ResumeData()
-        });
-
-        /**
-         * ! ------------------------------------- OTHER ADDITIONAL STATES --------------------------------------- !
-         */
-
-
-        const contactEdit = {
-            list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
-            modal: ref<boolean>(false),
-            data: ref<{ id: number, name: string, value: string, type: string, preferred: boolean }>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
-        }
-
-        class UseTodoExtended extends UseTodo {
-            public modal: boolean;
-            constructor(args: { list: any[], bool?: boolean }) {
-                super(args.list);
-                this.modal = args.bool || false;
-            }
-        }
-
-        console.log(new UseTodoExtended({ list: contactEdit.list.array, bool: false }));
-
-
-        function canceContactlEdit(): void {
-            contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
-        }
-
-        /**
-        * ? ---------------------- BUILT IN VUE METHODS --------------------------- ?
-        */
-
-        watch(faqChange, (data) => {
-            if (!faqChange.value) {
-                console.log(data);
-            }
-        })
-
-
-        /**
-         * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
-         */
         return {
-            resume,
-            months,
-            ResumeOptions,
-            langOptionsValue,
-            langOptions,
-            icons,
-            skillsIcons,
-            visiblityOptionsValue,
-            visiblityOptions,
-            completed,
-            portfolioCheckout,
-            portfolioDialog,
-            faqChange,
-            skillsChange,
-            ClassicEditor,
-            aboutMeChange,
-            contactChange,
-            antParentNode,
-
-            resumeData,
-            contactEdit,
-            canceContactlEdit,
+            resume
         }
-
-    },
-    /**
-     * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
-     */
+    }
 })
 </script>
 <style>

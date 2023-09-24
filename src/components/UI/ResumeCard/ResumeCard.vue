@@ -3,7 +3,7 @@
         <div class="content">
 
             <h2 class="title">
-                <router-link to="/resume-edit/25">{{ resume.title }}</router-link>
+                <router-link to="/resume-editor/25">{{ resume.title }}</router-link>
             </h2>
 
             <p class="updated">Обновлено

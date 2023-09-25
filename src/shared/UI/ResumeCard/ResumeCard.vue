@@ -55,8 +55,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { iResume, months } from "@/data/interfaces";
-import { useStore } from "@/data/store";
+import { iResume, months } from "@/app/store/interfaces";
+import { useStore } from "@/app/store/store";
 
 export default defineComponent({
     name: 'ResumeCard',
@@ -83,7 +83,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/style.scss';
+@import '@/app/assets/style.scss';
 
 .resume-card {
     padding: 22px;
@@ -177,4 +177,4 @@ export default defineComponent({
         }
     }
 }
-</style>
+</style>@/shared/data/interfaces@/shared/data/store

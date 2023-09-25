@@ -17,7 +17,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/style.scss';
+@import '@/app/assets/style.scss';
 
 .resume-active {
     background: var(--element-background);

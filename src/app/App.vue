@@ -8,8 +8,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Navigation } from "./components/UI";
-import { SearchBar } from "./components/UI";
+import { SearchBar } from "@/shared/UI";
+import { Navigation } from "@/widgets";
 
 export default defineComponent({
   components: {

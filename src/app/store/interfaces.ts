@@ -60,7 +60,7 @@ export interface iUserResume {
   userName: string;
   gender: "M" | "F" | null;
   img: string;
-  dob: string;
+  dob: number;
   contact: Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>;
   city: string | null;
   move: boolean | null;

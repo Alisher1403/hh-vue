@@ -1,4 +1,4 @@
-@import "@/assets/style.scss";
+@import "@/app/assets/style.scss";
 
 /************************************************************/
 $break-width: 0.5px;
@@ -218,9 +218,10 @@ $skills-height: 40px;
           }
         }
 
-        .user-date-edit {
+        .user-faq-edit {
           display: flex;
-          column-gap: 8px;
+          flex-wrap: wrap;
+          gap: 8px;
         }
       }
 

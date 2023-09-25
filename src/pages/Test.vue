@@ -872,4 +872,4 @@ export default defineComponent({
 </script>
 <style>
 @import url("./style.scss");
-</style>
+</style>@/shared/data/interfaces

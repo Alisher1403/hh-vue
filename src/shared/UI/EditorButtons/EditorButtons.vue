@@ -12,7 +12,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
+@import '@/app/assets/style.scss';
 
 .editor-btns {
     display: flex;

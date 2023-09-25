@@ -357,8 +357,10 @@ h6 {
 }
 
 // ? ==== ANT INPUT==== ? //
-.ant-input {
+.ant-input,
+.ant-input-number {
   border-color: var(--border-color);
+  font-family: var(--font-regular);
 }
 
 /*********/

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ActiveSeek, ResumeCard } from "@/components/UI";
+import { ActiveSeek, ResumeCard } from "@/shared/UI";
 
 export default defineComponent({
     name: 'ResumePage',
@@ -40,7 +40,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/style.scss';
+@import '@/app/assets/style.scss';
 
 .resume {
     padding: 50px 0;

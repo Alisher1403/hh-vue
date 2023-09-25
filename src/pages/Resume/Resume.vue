@@ -19,7 +19,7 @@
                             </div>
 
                             <!-- EDITING -->
-                            <div class="edit user-date-edit" v-if="faqChange">
+                            <div class="edit user-faq-edit" v-if="faqChange">
                                 <a-select :options="[
                                     {
                                         value: null,
@@ -36,7 +36,13 @@
                                 ]" v-model:value="resumeData.gender.value" style="width: 120px;">
                                 </a-select>
 
-                                <!-- <a-date-picker v-model:value="resumeData.dob.value" :format="'DD.MM.YYYY'" /> -->
+                                <a-input-number v-model:value="resumeData.dob.value.d" />
+                                <a-select v-model:value="resumeData.dob.value.m">
+                                    <a-select-option v-for="(month, index) in months['rus']" :key="index" :value="index">
+                                        {{ month }}
+                                    </a-select-option>
+                                </a-select>
+                                <a-input-number v-model:value="resumeData.dob.value.y" />
                             </div>
 
                             <!-- EDITING -->
@@ -49,6 +55,7 @@
 
                         <div class="right">
                             <router-link to="" class="resume-editor-link">
+                                <div v-html="icons.user"></div>
                                 <img :src="resume.img" class="user-image" alt="">
                             </router-link>
                         </div>
@@ -469,7 +476,6 @@
 <script lang="ts">
 import {
     defineComponent,
-    onMounted,
     Ref,
     watch
 } from "vue";
@@ -480,14 +486,14 @@ import {
     months,
     ResumeOptions,
     iUserResume
-} from "@/data/interfaces";
+} from "@/app/store/interfaces";
 import type {
     SelectProps
 } from 'ant-design-vue';
 import {
     icons,
     skillsIcons
-} from "@/assets/icons";
+} from "@/app/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
     UseTodo
@@ -495,7 +501,7 @@ import {
 import {
     EditorButtons,
     Modal
-} from "@/components/UI";
+} from "@/shared/UI";
 
 export default defineComponent({
     name: 'Resume',
@@ -508,7 +514,7 @@ export default defineComponent({
             userName: 'Чинбердиев Алишер Акромович',
             gender: 'M',
             img: '',
-            dob: '1047582000000',
+            dob: 1047582000000,
             contact: [{
                 id: 1,
                 name: 'phone',
@@ -735,13 +741,17 @@ export default defineComponent({
          */
 
         class ResumeData {
+            date: Date;
             gender: Ref;
+            dob: Ref;
             skills: Ref;
             aboutMe: Ref;
             contact: Ref;
 
             constructor() {
+                this.date = new Date(resume.dob);
                 this.gender = ref<'M' | 'F' | null>(resume.gender);
+                this.dob = ref<{ d: number, m: number, y: number }>({ d: this.date.getDate(), m: this.date.getMonth() + 1, y: this.date.getFullYear() });
                 this.skills = ref<Array<string>>([...resume.skills].map(el => el.toLocaleLowerCase()));
                 this.aboutMe = ref<string>(resume.aboutMe);
                 this.contact = ref<Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>>(resume.contact);
@@ -776,7 +786,7 @@ export default defineComponent({
         const resumeData = new ResumeData();
 
         console.log({
-            ...new ResumeData()
+            ...new ResumeData().dob.value
         });
 
         /**
@@ -785,7 +795,7 @@ export default defineComponent({
 
         function getAge(): void {
             const d = new Date();
-            const birthDay = new Date(+resume.dob);
+            const birthDay = new Date(resume.dob);
             calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
         }
 
@@ -794,17 +804,6 @@ export default defineComponent({
             modal: ref<boolean>(false),
             data: ref<{ id: number, name: string, value: string, type: string, preferred: boolean }>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
         }
-
-        class UseTodoExtended extends UseTodo {
-            public modal: boolean;
-            constructor(args: { list: any[], bool?: boolean }) {
-                super(args.list);
-                this.modal = args.bool || false;
-            }
-        }
-
-        console.log(new UseTodoExtended({ list: contactEdit.list.array, bool: false }));
-
 
         function canceContactlEdit(): void {
             contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
@@ -820,13 +819,11 @@ export default defineComponent({
             }
         })
 
-        onMounted(() => {
-            getAge();
-        })
 
         /**
          * ? ---------------------- RETURNING STATES AND FUNCTIONS --------------------------- ?
          */
+
         return {
             resume,
             months,

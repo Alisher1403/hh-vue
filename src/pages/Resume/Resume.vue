@@ -79,7 +79,7 @@
                                             <button v-html="icons.trash" class="editor-button"
                                                 @click="contactEdit.list.delete('id', contact.id)"></button>
                                             <button v-html="icons.edit" class="editor-button"
-                                                @click="contactEdit.modal.value = true, contactEdit.data = contact"></button>
+                                                @click="contactEdit.setOne(contact)"></button>
                                             <button v-html="icons.chevronUp" class="editor-button"></button>
                                             <button v-html="icons.chevronDown" class="editor-button"></button>
                                         </div>
@@ -93,8 +93,7 @@
                                 </li>
                             </ul>
                             <!--  -->
-                            <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = false"
-                                :title="'Контакт'">
+                            <Modal :open="contactEdit.modal" @onClose="contactEdit.modal = false" :title="'Контакт'">
                                 <div class="modal-content">
                                     <a-row :gutter="10">
                                         <a-col flex="100px">
@@ -136,7 +135,8 @@
 
                                     <a-row justify="end" :gutter="5">
                                         <a-col>
-                                            <button class="custom-btn btn-unrounded" style="width: 90px;">Save</button>
+                                            <button class="custom-btn btn-unrounded" style="width: 90px;"
+                                                @click="contactEdit.data = contactEdit.initialData">Save</button>
                                         </a-col>
                                         <a-col>
                                             <button class="custom-btn btn-unrounded" white
@@ -474,34 +474,14 @@
 <!-- ============================================================================================================================ -->
 
 <script lang="ts">
-import {
-    defineComponent,
-    Ref,
-    watch
-} from "vue";
-import {
-    ref
-} from "vue";
-import {
-    months,
-    ResumeOptions,
-    iUserResume
-} from "@/app/store/interfaces";
-import type {
-    SelectProps
-} from 'ant-design-vue';
-import {
-    icons,
-    skillsIcons
-} from "@/app/assets/icons";
+import { defineComponent, Ref, watch } from "vue";
+import { ref } from "vue";
+import { months, ResumeOptions, iUserResume } from "@/app/store/interfaces";
+import type { SelectProps } from 'ant-design-vue';
+import { icons, skillsIcons } from "@/app/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import {
-    UseTodo
-} from "@/hooks";
-import {
-    EditorButtons,
-    Modal
-} from "@/shared/UI";
+import { UseTodo } from "@/hooks";
+import { EditorButtons, Modal } from "@/shared/UI";
 
 export default defineComponent({
     name: 'Resume',
@@ -786,7 +766,7 @@ export default defineComponent({
         const resumeData = new ResumeData();
 
         console.log({
-            ...new ResumeData().dob.value
+            ...new ResumeData()
         });
 
         /**
@@ -799,11 +779,19 @@ export default defineComponent({
             calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
         }
 
-        const contactEdit = {
+        interface ContactType {
+            id: number, name: string, value: string, type: string, preferred: boolean
+        }
+
+        const contactEdit = ref({
             list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
             modal: ref<boolean>(false),
-            data: ref<{ id: number, name: string, value: string, type: string, preferred: boolean }>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
-        }
+            initialData: ref<ContactType>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
+            data: ref<ContactType>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
+            setOne: function (contact: ContactType) {
+                this.modal.value = true, this.data = contact, this.initialData = { ...contact }
+            }
+        }).value
 
         function canceContactlEdit(): void {
             contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
@@ -813,10 +801,10 @@ export default defineComponent({
         * ? ---------------------- BUILT IN VUE METHODS --------------------------- ?
         */
 
-        watch(faqChange, (data) => {
-            if (!faqChange.value) {
-                console.log(data);
-            }
+        watch(contactEdit, (data) => {
+            // if (!faqChange.value) {
+            console.log(data);
+            // }
         })
 
 

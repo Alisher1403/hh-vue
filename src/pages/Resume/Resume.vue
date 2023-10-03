@@ -6,7 +6,7 @@
                 <div class="resume-content">
 
                     <!------------------ SECTOR 1 ------------------->
-                    <Faq :data="resume"/>
+                    <Faq :data="resume" :setter="resumeData"/>
 
                     <!------------------ SECTOR 2 ------------------->
                     <div class="resume-sector-2 sector" v-if="resume.contact">
@@ -428,7 +428,7 @@
 <script lang="ts">
 import { defineComponent, Ref, watch } from "vue";
 import { ref } from "vue";
-import { months, ResumeOptions, iUserResume } from "@/app/store/interfaces";
+import { ResumeOptions, iUserResume } from "@/app/store/interfaces";
 import type { SelectProps } from 'ant-design-vue';
 import { icons, skillsIcons } from "@/app/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -661,8 +661,6 @@ export default defineComponent({
             portfolioCheckout.value = portfolio;
         }
 
-        const calculatedDob = ref<number>();
-
         const faqChange = ref<boolean>(false);
         const skillsChange = ref<boolean>(false);
         const aboutMeChange = ref<boolean>(false);
@@ -695,7 +693,7 @@ export default defineComponent({
             public setFaq() {
                 resume.gender = this.gender.value;
                 faqChange.value = false;
-                getAge();
+                // getAge();
             }
 
             public setContact(): void {
@@ -727,12 +725,6 @@ export default defineComponent({
         /**
          * ! ------------------------------------- OTHER ADDITIONAL STATES --------------------------------------- !
          */
-
-        function getAge(): void {
-            const d = new Date();
-            const birthDay = new Date(resume.dob);
-            calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
-        }
 
         interface ContactType {
             id: number, name: string, value: string, type: string, preferred: boolean
@@ -769,7 +761,6 @@ export default defineComponent({
 
         return {
             resume,
-            months,
             ResumeOptions,
             langOptionsValue,
             langOptions,
@@ -780,7 +771,6 @@ export default defineComponent({
             completed,
             portfolioCheckout,
             portfolioDialog,
-            calculatedDob,
             faqChange,
             skillsChange,
             tripChange,
@@ -789,7 +779,6 @@ export default defineComponent({
             contactChange,
             antParentNode,
             resumeData,
-            getAge,
             contactEdit,
             canceContactlEdit,
         }

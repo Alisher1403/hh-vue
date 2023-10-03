@@ -1,12 +1,12 @@
 <template>
-    <div class="props.data-sector-1 sector">
+    <div class="props.resume-sector-1 sector">
         <div class="left">
-            <h1 class="user-name title">{{ data.userName }}</h1>
+            <h1 class="user-name title">{{ resume.userName }}</h1>
 
             <div class="user-date" v-if="!editing">
-                <span v-if="data.gender">
-                    {{ data.gender == 'M' ? 'Мужчина, ' :
-                        data.gender == 'F' ? 'Женщина, ' : null }}</span>
+                <span v-if="resume.gender">
+                    {{ resume.gender == 'M' ? 'Мужчина, ' :
+                        resume.gender == 'F' ? 'Женщина, ' : null }}</span>
                 <span>{{ calculatedDob }}
                     лет</span>,
             </div>
@@ -39,35 +39,56 @@
             </div>
 
             <!-- EDITING -->
-            <button class="data-editor-link" v-if="!editing" @click="editing = true">Редактировать</button>
+            <button class="resume-editor-link" v-if="!editing" @click="editing = true">Редактировать</button>
 
-            <EditorButtons v-if="editing" @save="resumeData.setFaq()" @cancel="() => { resumeData.cancel('faq') }" />
+            <EditorButtons v-if="editing" @save="resumeData.setFaq()" @cancel="() => { editing = false }" />
         </div>
 
         <div class="right">
-            <router-link to="" class="data-editor-link">
+            <router-link to="" class="resume-editor-link">
                 <div v-html="icons.user"></div>
-                <img :src="data.img" class="user-image" alt="">
+                <img :src="resume.img" class="user-image" alt="">
             </router-link>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { iUserResume } from "@/app/store/interfaces";
-import { ref } from "vue";
+import { icons } from "@/app/assets/icons";
+import { iUserResume, months } from "@/app/store/interfaces";
+import { EditorButtons } from "@/shared/UI";
+import { onMounted, ref, watch } from "vue";
 import type { PropType } from 'vue'
+import '../style.scss';
 
 const props = defineProps({
     data: {
         type: Object as PropType<iUserResume>,
         required: true,
+    },
+    setter: {
+        type: Object,
+        required: true,
     }
 })
 
 const editing = ref<boolean>(false);
-const data = props.data;
+const resume = props.data;
+const calculatedDob = ref<number>();
+const resumeData = props.setter;
+
+function getAge(): void {
+    const d = new Date();
+    const birthDay = new Date(resume.dob);
+    calculatedDob.value = d.getFullYear() - birthDay.getFullYear() - +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()))
+}
+watch(editing, () => {
+    console.log(editing.value);
+    
+})
+
+onMounted(() => {
+    console.log(432);
+})
 
 </script>
-
-<style></style>

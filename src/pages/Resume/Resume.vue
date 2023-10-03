@@ -6,60 +6,7 @@
                 <div class="resume-content">
 
                     <!------------------ SECTOR 1 ------------------->
-                    <div class="resume-sector-1 sector">
-                        <div class="left">
-                            <h1 class="user-name title">{{ resume.userName }}</h1>
-
-                            <div class="user-date" v-if="!faqChange">
-                                <span v-if="resume.gender">
-                                    {{ resume.gender == 'M' ? 'Мужчина, ' :
-                                        resume.gender == 'F' ? 'Женщина, ' : null }}</span>
-                                <span>{{ calculatedDob }}
-                                    лет</span>,
-                            </div>
-
-                            <!-- EDITING -->
-                            <div class="edit user-faq-edit" v-if="faqChange">
-                                <a-select :options="[
-                                    {
-                                        value: null,
-                                        label: '...'
-                                    },
-                                    {
-                                        value: 'M',
-                                        label: 'Мужчина'
-                                    },
-                                    {
-                                        value: 'F',
-                                        label: 'Женщина'
-                                    },
-                                ]" v-model:value="resumeData.gender.value" style="width: 120px;">
-                                </a-select>
-
-                                <a-input-number v-model:value="resumeData.dob.value.d" />
-                                <a-select v-model:value="resumeData.dob.value.m">
-                                    <a-select-option v-for="(month, index) in months['rus']" :key="index" :value="index">
-                                        {{ month }}
-                                    </a-select-option>
-                                </a-select>
-                                <a-input-number v-model:value="resumeData.dob.value.y" />
-                            </div>
-
-                            <!-- EDITING -->
-                            <button class="resume-editor-link" v-if="!faqChange"
-                                @click="faqChange = true">Редактировать</button>
-
-                            <EditorButtons v-if="faqChange" @save="resumeData.setFaq()"
-                                @cancel="() => { resumeData.cancel('faq') }" />
-                        </div>
-
-                        <div class="right">
-                            <router-link to="" class="resume-editor-link">
-                                <div v-html="icons.user"></div>
-                                <img :src="resume.img" class="user-image" alt="">
-                            </router-link>
-                        </div>
-                    </div>
+                    <Faq :data="resume"/>
 
                     <!------------------ SECTOR 2 ------------------->
                     <div class="resume-sector-2 sector" v-if="resume.contact">
@@ -93,7 +40,8 @@
                                 </li>
                             </ul>
                             <!--  -->
-                            <Modal :open="contactEdit.modal" @onClose="contactEdit.modal = false" :title="'Контакт'">
+                            <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = false"
+                                :title="'Контакт'">
                                 <div class="modal-content">
                                     <a-row :gutter="10">
                                         <a-col flex="100px">
@@ -160,7 +108,11 @@
                             <p>{{ resume.move ? 'готов к переезду' : 'не готов к переезду' }},&nbsp;</p>
                             <p>{{ resume.bTrip ? 'готов к командировкам' : 'не готов к командировкам' }}</p>
                         </div>
-                        <router-link to="" class="resume-editor-link">Редактировать</router-link>
+                        <!-- EDITING -->
+                        <button class="resume-editor-link" @click="tripChange = true"
+                            v-if="!tripChange">Редактировать</button>
+                        <EditorButtons v-if="tripChange" @save="resumeData.setContact()"
+                            @cancel="() => { resumeData.cancel('contact') }" />
                     </div>
 
                     <hr class="break">
@@ -482,12 +434,14 @@ import { icons, skillsIcons } from "@/app/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { UseTodo } from "@/hooks";
 import { EditorButtons, Modal } from "@/shared/UI";
+import Faq from "./ui/FaqSector.vue";
 
 export default defineComponent({
     name: 'Resume',
     components: {
         EditorButtons,
         Modal,
+        Faq,
     },
     setup() {
         const resume: iUserResume = {
@@ -713,6 +667,7 @@ export default defineComponent({
         const skillsChange = ref<boolean>(false);
         const aboutMeChange = ref<boolean>(false);
         const contactChange = ref<boolean>(false);
+        const tripChange = ref<boolean>(false);
 
         const antParentNode = (trigger: any): void => trigger.parentNode;
 
@@ -783,7 +738,7 @@ export default defineComponent({
             id: number, name: string, value: string, type: string, preferred: boolean
         }
 
-        const contactEdit = ref({
+        const contactEdit = {
             list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
             modal: ref<boolean>(false),
             initialData: ref<ContactType>({ id: Date.now(), name: '', value: '', type: '', preferred: false }).value,
@@ -791,7 +746,7 @@ export default defineComponent({
             setOne: function (contact: ContactType) {
                 this.modal.value = true, this.data = contact, this.initialData = { ...contact }
             }
-        }).value
+        }
 
         function canceContactlEdit(): void {
             contactEdit.data = { id: Date.now(), name: '', value: '', type: '', preferred: false };
@@ -828,6 +783,7 @@ export default defineComponent({
             calculatedDob,
             faqChange,
             skillsChange,
+            tripChange,
             ClassicEditor,
             aboutMeChange,
             contactChange,
@@ -842,7 +798,7 @@ export default defineComponent({
     /**
      * ? ------------------------------------- OTHER BUILT-IN METHODS --------------------------------------- !
      */
-})
+});
 </script>
 <style>
 @import url("./style.scss");

@@ -40,7 +40,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '@/app/assets/style.scss';
+@import '@/shared/assets/style.scss';
 
 .resume {
     padding: 50px 0;

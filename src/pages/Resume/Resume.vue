@@ -6,7 +6,7 @@
                 <div class="resume-content">
 
                     <!------------------ SECTOR 1 ------------------->
-                    <Faq :data="resume" :setter="resumeData"/>
+                    <Faq :data="resume" :setter="resumeData" />
 
                     <!------------------ SECTOR 2 ------------------->
                     <div class="resume-sector-2 sector" v-if="resume.contact">
@@ -430,7 +430,7 @@ import { defineComponent, Ref, watch } from "vue";
 import { ref } from "vue";
 import { ResumeOptions, iUserResume } from "@/app/store/interfaces";
 import type { SelectProps } from 'ant-design-vue';
-import { icons, skillsIcons } from "@/app/assets/icons";
+import { icons, skillsIcons } from "@/shared/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { UseTodo } from "@/hooks";
 import { EditorButtons, Modal } from "@/shared/UI";

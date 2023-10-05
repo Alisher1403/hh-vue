@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { icons } from "@/app/assets/icons";
+import { icons } from "@/shared/assets/icons";
 import { defineComponent, watch } from "vue";
 
 export default defineComponent({
@@ -34,7 +34,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/app/assets/style.scss';
+@import '@/shared/assets/style.scss';
 
 .modal {
     position: fixed;

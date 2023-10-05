@@ -20,5 +20,5 @@ export default defineComponent({
 </script>
 
 <style>
-@import url(./assets/style.scss);
+@import '@/shared/assets/style.scss';
 </style>

@@ -60,7 +60,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "@/app/store/store";
-import { icons } from "@/app/assets/icons";
+import { icons } from "@/shared/assets/icons";
 
 export default defineComponent({
     name: 'Navigation',
@@ -123,7 +123,7 @@ export default defineComponent({
 <!------------------------------------------------ STYLE ------------------------------------------------>
 
 <style scoped lang="scss">
-@import '@/app/assets/style.scss';
+@import '@/shared/assets/style.scss';
 
 nav {
     background: #222324;

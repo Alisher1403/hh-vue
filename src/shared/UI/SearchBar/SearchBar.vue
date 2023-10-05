@@ -28,7 +28,7 @@
 <script lang="ts">
 import { useStore } from "@/app/store/store";
 import { defineComponent, ref } from "vue";
-import { icons } from "@/app/assets/icons";
+import { icons } from "@/shared/assets/icons";
 
 export default defineComponent({
     name: 'SearchBar',
@@ -51,7 +51,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '@/app/assets/style.scss';
+@import '@/shared/assets/style.scss';
 
 .searchbar {
     display: none;

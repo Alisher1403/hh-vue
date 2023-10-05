@@ -54,12 +54,11 @@
 </template>
 
 <script setup lang="ts">
-import { icons } from "@/app/assets/icons";
+import { icons } from "@/shared/assets/icons";
 import { iUserResume, months } from "@/app/store/interfaces";
 import { EditorButtons } from "@/shared/UI";
 import { onMounted, ref, watch } from "vue";
 import type { PropType } from 'vue'
-import '../style.scss';
 
 const props = defineProps({
     data: {
@@ -84,11 +83,56 @@ function getAge(): void {
 }
 watch(editing, () => {
     console.log(editing.value);
-    
 })
 
 onMounted(() => {
     console.log(432);
+    getAge();
 })
 
 </script>
+
+<style scoped lang="scss">
+@import '@/shared/assets/style.scss';
+
+.resume-sector-1 {
+    @include flex(space-between, center);
+    padding-right: 30px;
+    padding-top: 10px;
+
+    .left {
+        .user-name {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .user-date {
+            @include text();
+            margin-bottom: 5px;
+        }
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+
+        .resume-editor-link {
+            border-radius: 50%;
+            border: 0.5px solid var(--border-color);
+            overflow: hidden;
+
+            .user-image {
+                height: 140px;
+                aspect-ratio: 1/1;
+                object-fit: cover;
+            }
+        }
+    }
+
+    .user-faq-edit {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+</style>

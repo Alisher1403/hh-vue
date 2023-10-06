@@ -1,5 +1,5 @@
 <template>
-    <div class="props.resume-sector-1 sector">
+    <div class="resume-sector-1 sector">
         <div class="left">
             <h1 class="user-name title">{{ resume.userName }}</h1>
 

@@ -1,16 +1,20 @@
 <template>
   <div class="resume-sector-1 sector">
     <div class="left">
-      <h1 class="user-name title">{{ resume.userName }}</h1>
+      <div v-if="!editing">
+        <h1 class="user-name title">{{ resume.userName }}</h1>
 
-      <div class="user-date" v-if="!editing">
-        <span v-if="resume.gender"> {{ resume.gender == "M" ? "Мужчина, " : resume.gender == "F" ? "Женщина, " : null }}</span>
-        <span>{{ calculatedDob }} лет</span>,
-        <span>родился {{ dob.d }} {{ months["rus"][dob.m] }} {{ dob.y }}</span>
+        <div class="user-date">
+          <span v-if="resume.gender"> {{ resume.gender == "M" ? "Мужчина, " : resume.gender == "F" ? "Женщина, " : null }}</span>
+          <span>{{ calculatedDob }} лет</span>,
+          <span>родился {{ dob.d }} {{ months["rus"][dob.m] }} {{ dob.y }}</span>
+        </div>
       </div>
 
       <!-- EDITING -->
       <div class="edit user-faq-edit" v-if="editing">
+        <a-input v-model:value="userName" />
+
         <a-select
           :options="[
             {
@@ -43,30 +47,24 @@
       <!-- EDITING -->
       <button class="resume-editor-link" v-if="!editing" @click="editing = true">Редактировать</button>
 
-      <EditorButtons
-        v-if="editing"
-        @save="saveData()"
-        @cancel="
-          () => {
-            editing = false;
-          }
-        "
-      />
+      <EditorButtons v-if="editing" @save="saveData()" @cancel="cancelData()" />
     </div>
 
     <div class="right">
       <router-link to="" class="resume-editor-link">
-        <div v-html="icons.user"></div>
-        <img :src="resume.img" class="user-image" alt="" />
+        <div class="user-image-wrapper">
+          <div v-html="icons.account" class="user-no-image" v-if="image == ''"></div>
+          <img :src="image" class="user-image" alt="" />
+        </div>
       </router-link>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { useStore } from "@/app/store/store";
+import { useStore } from "../../index";
 import { icons } from "@/shared/assets/icons";
-import { months } from "@/app/store/interfaces";
+import { interfaces } from "../../index";
 import { EditorButtons } from "@/shared/UI";
 import { defineComponent, onMounted, ref } from "vue";
 
@@ -76,17 +74,20 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const { months } = interfaces;
 
     const editing = ref<boolean>(false);
     const resume = store.state.resume;
     const calculatedDob = ref<number>();
 
-    const date = new Date(resume.dob);
+    const userName = ref<string>(resume.userName);
+    const image = ref<string>(resume.img);
     const gender = ref<"M" | "F" | null>(resume.gender);
+    const date = ref(new Date(resume.dob));
     const dob = ref<{ d: number; m: number; y: number }>({
-      d: date.getDate(),
-      m: date.getMonth(),
-      y: date.getFullYear(),
+      d: date.value.getDate(),
+      m: date.value.getMonth(),
+      y: date.value.getFullYear(),
     });
 
     function getAge(): void {
@@ -99,17 +100,29 @@ export default defineComponent({
     }
 
     function saveData() {
+      resume.userName = userName.value;
       resume.gender = gender.value;
       resume.dob = new Date(dob.value.y, dob.value.m, dob.value.d).getTime();
       editing.value = false;
       getAge();
     }
 
+    function cancelData() {
+      userName.value = resume.userName;
+      gender.value = resume.gender;
+      dob.value = {
+        d: date.value.getDate(),
+        m: date.value.getMonth(),
+        y: date.value.getFullYear(),
+      };
+      editing.value = false;
+    }
+
     onMounted(() => {
       getAge();
     });
 
-    return { icons, months, resume, dob, gender, editing, calculatedDob, saveData };
+    return { icons, months, resume, userName, image, dob, gender, editing, calculatedDob, saveData, cancelData };
   },
 });
 
@@ -152,10 +165,28 @@ export default defineComponent({
       border: 0.5px solid var(--border-color);
       overflow: hidden;
 
-      .user-image {
+      .user-image-wrapper {
         height: 140px;
+        width: 140px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         aspect-ratio: 1/1;
-        object-fit: cover;
+
+        .user-no-image {
+          height: 100%;
+          width: 100%;
+          fill: rgb(84, 84, 84);
+          z-index: -1;
+          position: absolute;
+        }
+
+        .user-image {
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+        }
       }
     }
   }

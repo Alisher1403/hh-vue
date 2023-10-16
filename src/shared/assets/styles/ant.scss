@@ -1,0 +1,69 @@
+@import url(../style.scss);
+
+// ? ================================ ANT SELECT ==================================== ? //
+.ant-select {
+  * {
+    font-family: var(--font-regular) !important;
+    line-height: 100% !important;
+  }
+
+  &.ant-select-open {
+    border: none !important;
+
+    .ant-select-selector {
+      border-color: var(--active-input-color) !important;
+    }
+  }
+
+  .ant-select-selection-item {
+    overflow: visible !important;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+
+    .ant-select-selection-item-content {
+      overflow: visible;
+    }
+
+    .ant-select-selection-item-remove {
+      margin-top: 1px;
+    }
+  }
+
+  .ant-select-selector {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    border-radius: 8px !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .ant-select-arrow {
+    svg {
+      fill: var(--border-color) !important;
+    }
+  }
+}
+
+// ? ================================ ANT PICKER ==================================== ? //
+.ant-picker {
+  border: 0.5px solid var(--border-color);
+
+  svg {
+    fill: var(--border-color);
+  }
+}
+
+// ? ================================ ANT INPUT ==================================== ? //
+.ant-input,
+.ant-input-number {
+  border-color: var(--border-color);
+  font-family: var(--font-regular);
+}
+
+.ant-input {
+  padding: 4px 10px;
+}

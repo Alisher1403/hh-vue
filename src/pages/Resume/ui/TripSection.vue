@@ -18,7 +18,7 @@
         </a-select>
       </div>
       <div class="margin-top">
-        <p class="input-title">Переезд</p>
+        <p class="input-title">Готовность к командировкам</p>
         <a-select style="width: 150px" v-model:value="bTrip">
           <a-select-option v-for="(option, key) in ResumeOptions.bTrip" :key="option" :value="key">{{ option }}</a-select-option>
         </a-select>
@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts">
-import { ResumeOptions, getOptionsValue } from "@/app/store/interfaces";
-import { useStore } from "@/app/store/store";
+import { interfaces } from "../../index";
+import { useStore } from "../../index";
 import { EditorButtons } from "@/shared/UI";
 import { defineComponent, ref } from "vue";
 
@@ -41,6 +41,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const { ResumeOptions, getOptionsValue } = interfaces;
     const resume = store.state.resume;
     const editing = ref<boolean>(false);
 

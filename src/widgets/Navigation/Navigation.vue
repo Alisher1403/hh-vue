@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useStore } from "@/app/store/store";
+import { useStore } from "../index";
 import { icons } from "@/shared/assets/icons";
 
 export default defineComponent({

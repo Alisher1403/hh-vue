@@ -1,4 +1,5 @@
 @import url(./fonts/fonts.scss);
+@import url(./styles/ant.scss);
 
 * {
   margin: 0;
@@ -52,6 +53,7 @@
   --font-bold: "NotoSans-Bold";
   --font-bold-italic: "NotoSans-Bold-Italic";
   --default-margin: 15px;
+  --input-group-gap: 8px;
 }
 
 @mixin text() {
@@ -251,6 +253,8 @@
 
 /****************************************/
 
+// ? ================================ TITLE AND HEADING STYLES ==================================== ? //
+
 p,
 h1,
 h2,
@@ -312,69 +316,16 @@ h6 {
 
 /**************************************************************************/
 
-// ? ==== ANT SELECT ==== ? //
-.ant-select {
-  * {
-    font-family: var(--font-regular) !important;
-    line-height: 100% !important;
-  }
-
-  &.ant-select-open {
-    border: none !important;
-
-    .ant-select-selector {
-      border-color: var(--active-input-color) !important;
-    }
-  }
-
-  .ant-select-selection-item {
-    overflow: visible !important;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-
-  .ant-select-selector {
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    border-radius: 8px !important;
-    border-color: var(--border-color) !important;
-  }
-
-  .ant-select-arrow {
-    svg {
-      fill: var(--border-color) !important;
-    }
-  }
-}
-
-.ant-picker {
-  border: 0.5px solid var(--border-color);
-
-  svg {
-    fill: var(--border-color);
-  }
-}
-
-// ? ==== ANT INPUT==== ? //
-.ant-input,
-.ant-input-number {
-  border-color: var(--border-color);
-  font-family: var(--font-regular);
-}
-
-.ant-input {
-  padding: 4px 7px;
-}
-
-/*********/
-
 .custom-btn {
   @include custom-btn();
 }
 
 /********************************************************/
+
+.input-group {
+  display: flex;
+  gap: var(--input-group-gap);
+}
 
 .input-subtitle {
   font-family: var(--font-medium);

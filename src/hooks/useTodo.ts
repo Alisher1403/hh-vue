@@ -22,4 +22,21 @@ export default class UseTodo implements IUseTodo {
     this.array[index] = value;
     return this.array;
   }
+
+  public move(element: any, to: string) {
+    const index = this.array.findIndex((e) => e == element);
+    if (to == ">") {
+      const nextElem = this.array[index + 1];
+      if (index !== this.array.length - 1) {
+        this.array[index + 1] = element;
+        this.array[index] = nextElem;
+      }
+    } else if (to == "<") {
+      const nextElem = this.array[index - 1];
+      if (index !== 0) {
+        this.array[index - 1] = element;
+        this.array[index] = nextElem;
+      }
+    }
+  }
 }

@@ -5,7 +5,7 @@
         <!-- ================ RESUME CONTENT ================= -->
         <div class="resume-content">
           <!------------------ SECTOR 1 ------------------->
-          <FaqSection :data="resume" :setter="resumeData" />
+          <InfoSection />
 
           <!------------------ SECTOR 2 ------------------->
           <ContactSection />
@@ -16,153 +16,21 @@
           <hr class="break" />
 
           <!------------------ SECTOR 4 ------------------->
-          <div class="resume-sector-4 sector">
-            <div class="content">
-              <div class="user-position title">
-                <h2>{{ resume.position }}</h2>
-              </div>
-
-              <p class="user-salary">
-                Зарплата: <span>{{ resume.salary }}{{ resume.currency }}</span>
-              </p>
-
-              <div class="user-specialization">
-                <p class="title">Специализации:</p>
-                <ul class="spec-list">
-                  <li class="spec-li" v-for="spec in resume.specialization" :key="spec">{{ spec }}</li>
-                </ul>
-              </div>
-
-              <p class="user-employment">Занятость: {{ ResumeOptions.employment[resume.employment] }}</p>
-              <p class="user-schedule">График работы: {{ ResumeOptions.schedule[resume.schedule] }}</p>
-            </div>
-
-            <router-link to="" class="resume-editor-link">Редактировать</router-link>
-          </div>
+          <EmploymentSection />
 
           <hr class="break" />
 
           <!------------------ SECTOR 5 ------------------->
-          <div class="resume-sector-5 sector">
-            <div class="content">
-              <h2 class="title">Ключевые навыки</h2>
-
-              <ul class="user-skills" v-if="!skillsChange" v-memo="[resumeData.skills.value]">
-                <li class="skill" v-for="skill in resume.skills" :key="skill">
-                  <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
-                  <p class="skill-name text-block">
-                    {{ skillsIcons[skill.toLocaleLowerCase()] ? skillsIcons[skill.toLocaleLowerCase()].name : skill }}
-                  </p>
-                </li>
-              </ul>
-
-              <!-- EDITING -->
-              <a-select
-                v-if="skillsChange"
-                class="skills-select"
-                style="width: 100%"
-                mode="tags"
-                v-model:value="resumeData.skills.value"
-                autofocus
-                v-memo="[resumeData.skills.value]"
-              >
-                <a-select-option
-                  class="user-portfolio-scoped-style"
-                  v-for="el in Object.keys(skillsIcons)"
-                  :key="el"
-                  :value="el.toLocaleLowerCase()"
-                  :getPopupContainer="antParentNode"
-                >
-                  <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]?.icon"></div>
-                  <p class="skill-name text-block">{{ skillsIcons[el.toLocaleLowerCase()]?.name }}</p>
-                </a-select-option>
-              </a-select>
-            </div>
-
-            <button class="resume-editor-link" @click="skillsChange = true" v-if="!skillsChange">Редактировать</button>
-
-            <EditorButtons
-              v-if="skillsChange"
-              justify-end
-              @save="
-                () => {
-                  resume['skills'] = resumeData.skills.value;
-                  skillsChange = false;
-                }
-              "
-              @cancel="
-                () => {
-                  resumeData.skills.value = resume['skills'].map((el) => el.toLocaleLowerCase());
-                  skillsChange = false;
-                }
-              "
-            />
-          </div>
+          <SkillsSection />
 
           <!------------------ SECTOR 6 ------------------->
-          <div class="resume-sector-6 sector">
-            <div class="content">
-              <div class="title">Обо мне</div>
-              <div class="user-aboutMe" v-html="resume.aboutMe" v-if="!aboutMeChange"></div>
-            </div>
-
-            <div v-if="aboutMeChange">
-              <ckeditor :editor="ClassicEditor" v-model="resumeData.aboutMe.value" v-memo="[resumeData.aboutMe.value]"></ckeditor>
-            </div>
-
-            <!-- EDITING -->
-            <button class="resume-editor-link" v-if="!aboutMeChange" @click="aboutMeChange = true">Редактировать</button>
-
-            <EditorButtons
-              v-if="aboutMeChange"
-              justify-end
-              @save="
-                () => {
-                  resume['aboutMe'] = resumeData.aboutMe.value;
-                  aboutMeChange = false;
-                }
-              "
-              @cancel="
-                () => {
-                  resumeData.aboutMe.value = resume['aboutMe'];
-                  aboutMeChange = false;
-                }
-              "
-            />
-          </div>
+          <AboutSection />
 
           <hr class="break" />
 
           <!------------------ SECTOR 7 ------------------->
-          <div class="resume-sector-7 sector">
-            <div class="content">
-              <h2 class="title">Портфолио</h2>
-              <ul class="user-portfolio-list">
-                <li class="user-portfolio" v-for="portfolio in resume.portfolio" :key="resume.portfolio.indexOf(portfolio)">
-                  <div class="content" @click="portfolioDialog(portfolio)">
-                    <img class="portfolio-image" :src="portfolio.img" alt="" />
-                    <img class="portfolio-bg" :src="portfolio.img" alt="" />
-                  </div>
-                </li>
-              </ul>
-            </div>
 
-            <div :open="portfolioCheckout !== null" class="portfolio-dialog" @click="portfolioDialog(null)">
-              <div class="dialog-content" @click.stop>
-                <div class="dialog-show">
-                  <img :src="portfolioCheckout?.img" class="portfolio-image" alt="" />
-                </div>
-                <div class="dialog-description" v-if="portfolioCheckout?.title">
-                  <h2 class="title">{{ portfolioCheckout.title }}</h2>
-                  <div class="description text-block" v-html="portfolioCheckout.description"></div>
-                </div>
-              </div>
-              <button v-html="icons.x" class="exit-button" @click.stop="portfolioDialog(null)"></button>
-            </div>
-
-            <router-link to="" class="resume-editor-link">Редактировать</router-link>
-          </div>
-
+          <PortfolioSection />
           <hr class="break" />
 
           <!------------------ SECTOR 8 ------------------->
@@ -350,26 +218,32 @@
 <script lang="ts">
 import { defineComponent, Ref } from "vue";
 import { ref } from "vue";
-import { ResumeOptions } from "@/app/store/interfaces";
 import type { SelectProps } from "ant-design-vue";
 import { icons, skillsIcons } from "@/shared/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { EditorButtons, Modal } from "@/shared/UI";
-import { FaqSection, ContactSection, TripSection } from "./ui";
-import { useStore } from "@/app/store/store";
+import { InfoSection, ContactSection, TripSection, EmploymentSection, SkillsSection, AboutSection, PortfolioSection } from "./ui";
+import { antParentNode } from "@/shared/constants";
+import { useStore } from "../index";
+import { interfaces } from "../index";
 
 export default defineComponent({
   name: "Resume",
   components: {
     EditorButtons,
     Modal,
-    FaqSection,
+    InfoSection,
     ContactSection,
     TripSection,
+    EmploymentSection,
+    SkillsSection,
+    AboutSection,
+    PortfolioSection,
   },
   setup() {
     const store = useStore();
     const resume = store.state.resume;
+    const { ResumeOptions } = interfaces;
 
     /**
      * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
@@ -423,23 +297,7 @@ export default defineComponent({
       img: string;
     } | null>(null);
 
-    function portfolioDialog(
-      portfolio: {
-        title: string;
-        description: string;
-        img: string;
-      } | null
-    ): void {
-      document.body.style.overflow = portfolio == null ? "auto" : "hidden";
-      portfolioCheckout.value = portfolio;
-    }
-
-    const faqChange = ref<boolean>(false);
-    const skillsChange = ref<boolean>(false);
-    const aboutMeChange = ref<boolean>(false);
     const contactChange = ref<boolean>(false);
-
-    const antParentNode = (trigger: any): void => trigger.parentNode;
 
     /**
      * ! ------------------------------------- RESUME DATA STATES --------------------------------------- !
@@ -470,7 +328,6 @@ export default defineComponent({
 
       public setFaq() {
         resume.gender = this.gender.value;
-        faqChange.value = false;
         // getAge();
       }
 
@@ -482,7 +339,6 @@ export default defineComponent({
         const cancelMethods = {
           faq: (): void => {
             resumeData.gender.value = resume["gender"];
-            faqChange.value = false;
           },
           contact: (): void => {
             contactChange.value = false;
@@ -519,11 +375,7 @@ export default defineComponent({
       visiblityOptions,
       completed,
       portfolioCheckout,
-      portfolioDialog,
-      faqChange,
-      skillsChange,
       ClassicEditor,
-      aboutMeChange,
       contactChange,
       antParentNode,
       resumeData,

@@ -23,6 +23,12 @@ const getOptionsValue = {
     ready: "Готов к командировкам",
     sometimes: "Иногда готов к командировкам",
   },
+  currencies: {
+    usd: "$",
+    sum: "сум",
+    rub: "₽",
+    eur: "€",
+  },
 };
 
 const ResumeOptions: any = {

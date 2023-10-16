@@ -5,128 +5,13 @@
         <!-- ================ RESUME CONTENT ================= -->
         <div class="resume-content">
           <!------------------ SECTOR 1 ------------------->
-          <FaqSector :data="resume" :setter="resumeData" />
+          <FaqSection :data="resume" :setter="resumeData" />
 
           <!------------------ SECTOR 2 ------------------->
-          <div class="resume-sector-2 sector" v-if="resume.contact">
-            <div class="content">
-              <h4 class="title">Контакты</h4>
-              <ul>
-                <li v-for="(contact, index) in contactEdit.list.array" :key="index">
-                  <div class="content">
-                    <div class="contact">
-                      <span class="contact-name">{{ contact.name }}</span
-                      >:
-                      <a class="contact-link" :href="contact.type + contact.value" :target="contact.type !== 'tel:' ? '_blank' : ''">{{
-                        contact.value
-                      }}</a>
-                      <span class="text-block" v-if="contact.preferred"> — предпочитаемый способ связи</span>
-                    </div>
-                    <div class="todo-editor" v-if="contactChange">
-                      <button v-html="icons.trash" class="editor-button" @click="contactEdit.list.delete('id', contact.id)"></button>
-                      <button v-html="icons.edit" class="editor-button" @click="contactEdit.setOne(contact)"></button>
-                      <button v-html="icons.chevronUp" class="editor-button"></button>
-                      <button v-html="icons.chevronDown" class="editor-button"></button>
-                    </div>
-                  </div>
-                </li>
-                <li v-if="contactChange">
-                  <button class="custom-btn" size="small">
-                    <p text>Добавить еще</p>
-                    <div v-html="icons.plus" icon></div>
-                  </button>
-                </li>
-              </ul>
-              <!--  -->
-              <Modal :open="contactEdit.modal.value" @onClose="contactEdit.modal.value = false" :title="'Контакт'">
-                <div class="modal-content">
-                  <a-row :gutter="10">
-                    <a-col flex="100px">
-                      <h4 class="input-subtitle input-subtitle-margin">Название</h4>
-                      <a-input v-model:value="contactEdit.data.name" placeholder="Название"></a-input>
-                    </a-col>
-                    <a-col flex="auto">
-                      <h4 class="input-subtitle input-subtitle-margin">Ссылка на сайт</h4>
-                      <a-input v-model:value="contactEdit.data.value" placeholder="Ссылка"></a-input>
-                    </a-col>
-                  </a-row>
-
-                  <div>
-                    <h4 class="input-subtitle input-subtitle-margin">Тип связи</h4>
-                    <a-select
-                      :options="[
-                        {
-                          value: 'tel:',
-                          label: 'Номер Телефона',
-                        },
-                        {
-                          value: 'mailto:',
-                          label: 'Email',
-                        },
-                        {
-                          value: '',
-                          label: 'Другое',
-                        },
-                      ]"
-                      style="width: 100%"
-                      v-model:value="contactEdit.data.type"
-                    ></a-select>
-                  </div>
-
-                  <a-row :gutter="10" :align="'middle'">
-                    <a-col>
-                      <h4 class="input-subtitle">Предпочтительный вид связи</h4>
-                    </a-col>
-                    <a-col>
-                      <a-switch v-model:checked="contactEdit.data.preferred"></a-switch>
-                    </a-col>
-                  </a-row>
-
-                  <a-row justify="end" :gutter="5">
-                    <a-col>
-                      <button class="custom-btn btn-unrounded" style="width: 90px" @click="contactEdit.data = contactEdit.initialData">
-                        Save
-                      </button>
-                    </a-col>
-                    <a-col>
-                      <button class="custom-btn btn-unrounded" white style="width: 90px">Cancel</button>
-                    </a-col>
-                  </a-row>
-                </div>
-              </Modal>
-              <!--  -->
-            </div>
-            <!-- EDITING -->
-            <button class="resume-editor-link" @click="contactChange = true" v-if="!contactChange">Редактировать</button>
-            <EditorButtons
-              v-if="contactChange"
-              @save="resumeData.setContact()"
-              @cancel="
-                () => {
-                  resumeData.cancel('contact');
-                }
-              "
-            />
-          </div>
+          <ContactSection />
 
           <!------------------ SECTOR 3 ------------------->
-          <div class="resume-sector-3 sector">
-            <div class="content">
-              <p>{{ resume.move ? "готов к переезду" : "не готов к переезду" }},&nbsp;</p>
-              <p>{{ resume.bTrip ? "готов к командировкам" : "не готов к командировкам" }}</p>
-            </div>
-            <!-- EDITING -->
-            <button class="resume-editor-link" @click="tripChange = true" v-if="!tripChange">Редактировать</button>
-            <EditorButtons
-              v-if="tripChange"
-              @save="resumeData.setContact()"
-              @cancel="
-                () => {
-                  resumeData.cancel('contact');
-                }
-              "
-            />
-          </div>
+          <TripSection />
 
           <hr class="break" />
 
@@ -463,15 +348,14 @@
 <!-- ============================================================================================================================ -->
 
 <script lang="ts">
-import { defineComponent, Ref, watch } from "vue";
+import { defineComponent, Ref } from "vue";
 import { ref } from "vue";
 import { ResumeOptions } from "@/app/store/interfaces";
 import type { SelectProps } from "ant-design-vue";
 import { icons, skillsIcons } from "@/shared/assets/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { UseTodo } from "@/hooks";
 import { EditorButtons, Modal } from "@/shared/UI";
-import FaqSector from "./ui/FaqSector.vue";
+import { FaqSection, ContactSection, TripSection } from "./ui";
 import { useStore } from "@/app/store/store";
 
 export default defineComponent({
@@ -479,7 +363,9 @@ export default defineComponent({
   components: {
     EditorButtons,
     Modal,
-    FaqSector,
+    FaqSection,
+    ContactSection,
+    TripSection,
   },
   setup() {
     const store = useStore();
@@ -552,7 +438,6 @@ export default defineComponent({
     const skillsChange = ref<boolean>(false);
     const aboutMeChange = ref<boolean>(false);
     const contactChange = ref<boolean>(false);
-    const tripChange = ref<boolean>(false);
 
     const antParentNode = (trigger: any): void => trigger.parentNode;
 
@@ -615,37 +500,9 @@ export default defineComponent({
      * ! ------------------------------------- OTHER ADDITIONAL STATES --------------------------------------- !
      */
 
-    interface ContactType {
-      id: number;
-      name: string;
-      value: string;
-      type: string;
-      preferred: boolean;
-    }
-
-    const contactEdit = {
-      list: ref<UseTodo>(new UseTodo(resumeData.contact.value)).value,
-      modal: ref<boolean>(false),
-      initialData: ref<ContactType>({ id: Date.now(), name: "", value: "", type: "", preferred: false }).value,
-      data: ref<ContactType>({ id: Date.now(), name: "", value: "", type: "", preferred: false }).value,
-      setOne: function (contact: ContactType) {
-        (this.modal.value = true), (this.data = contact), (this.initialData = { ...contact });
-      },
-    };
-
-    function canceContactlEdit(): void {
-      contactEdit.data = { id: Date.now(), name: "", value: "", type: "", preferred: false };
-    }
-
     /**
      * ? ---------------------- BUILT IN VUE METHODS --------------------------- ?
      */
-
-    watch(contactEdit, (data) => {
-      // if (!faqChange.value) {
-      console.log(data);
-      // }
-    });
 
     /**
      * ? ---------------------- RETURNING STATES  AND FUNCTIONS --------------------------- ?
@@ -665,14 +522,11 @@ export default defineComponent({
       portfolioDialog,
       faqChange,
       skillsChange,
-      tripChange,
       ClassicEditor,
       aboutMeChange,
       contactChange,
       antParentNode,
       resumeData,
-      contactEdit,
-      canceContactlEdit,
     };
   },
   /**

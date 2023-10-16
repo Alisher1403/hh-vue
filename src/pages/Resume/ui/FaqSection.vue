@@ -63,56 +63,64 @@
   </div>
 </template>
 
-<script setup name="FaqSector" lang="ts">
+<script lang="ts">
+import { useStore } from "@/app/store/store";
 import { icons } from "@/shared/assets/icons";
-import { iUserResume, months } from "@/app/store/interfaces";
+import { months } from "@/app/store/interfaces";
 import { EditorButtons } from "@/shared/UI";
-import { onMounted, ref, watch } from "vue";
-import type { PropType } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 
-const props = defineProps({
-  data: {
-    type: Object as PropType<iUserResume>,
-    required: true,
+export default defineComponent({
+  components: {
+    EditorButtons,
   },
-  setter: {
-    type: Object,
-    required: true,
+  setup() {
+    const store = useStore();
+
+    const editing = ref<boolean>(false);
+    const resume = store.state.resume;
+    const calculatedDob = ref<number>();
+
+    const date = new Date(resume.dob);
+    const gender = ref<"M" | "F" | null>(resume.gender);
+    const dob = ref<{ d: number; m: number; y: number }>({
+      d: date.getDate(),
+      m: date.getMonth(),
+      y: date.getFullYear(),
+    });
+
+    function getAge(): void {
+      const d = new Date();
+      const birthDay = new Date(resume.dob);
+      calculatedDob.value =
+        d.getFullYear() -
+        birthDay.getFullYear() -
+        +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()));
+    }
+
+    function saveData() {
+      resume.gender = gender.value;
+      resume.dob = new Date(dob.value.y, dob.value.m, dob.value.d).getTime();
+      editing.value = false;
+      getAge();
+    }
+
+    onMounted(() => {
+      getAge();
+    });
+
+    return { icons, months, resume, dob, gender, editing, calculatedDob, saveData };
   },
 });
 
-const editing = ref<boolean>(false);
-const resume = props.data;
-const resumeData = props.setter;
-const calculatedDob = ref<number>();
-
-const date = new Date(resume.dob);
-const gender = ref<"M" | "F" | null>(resume.gender);
-const dob = ref<{ d: number; m: number; y: number }>({
-  d: date.getDate(),
-  m: date.getMonth(),
-  y: date.getFullYear(),
-});
-
-function getAge(): void {
-  const d = new Date();
-  const birthDay = new Date(resume.dob);
-  calculatedDob.value =
-    d.getFullYear() -
-    birthDay.getFullYear() -
-    +(d.getMonth() < birthDay.getMonth() || (d.getMonth() === birthDay.getMonth() && d.getDate() < birthDay.getDate()));
-}
-
-function saveData() {
-  resume.gender = gender.value;
-  resume.dob = new Date(dob.value.y, dob.value.m, dob.value.d).getTime();
-  editing.value = false;
-  getAge();
-}
-
-onMounted(() => {
-  getAge();
-});
+// import { iUserResume, months } from "@/app/store/interfaces";
+// import type { PropType } from "vue";
+// const props = defineProps({
+//   data: {
+//     type: Object as PropType<iUserResume>,
+//     required: true,
+//   },
+// });
 </script>
 
 <style scoped lang="scss">

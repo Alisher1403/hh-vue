@@ -12,7 +12,18 @@ const months: any = {
   eng: ["January", "February", "March", "April", "May", "June", "July", "Augues", "September", "October", "November", "December"],
 };
 
-export { months };
+const getOptionsValue = {
+  move: {
+    impossible: "Не готов к переезду",
+    possible: "Готов к переезду",
+    desirable: "Желательный переезд",
+  },
+  bTrip: {
+    never: "Не готов к командировкам",
+    ready: "Готов к командировкам",
+    sometimes: "Иногда готов к командировкам",
+  },
+};
 
 const ResumeOptions: any = {
   employment: {
@@ -52,9 +63,19 @@ const ResumeOptions: any = {
     1: "Не более часа",
     "1.30": "Не более полутора часов",
   },
+  move: {
+    impossible: "Невозможен",
+    possible: "Возможен",
+    desirable: "Желателен",
+  },
+  bTrip: {
+    never: "Никогда",
+    ready: "Готов",
+    sometimes: "Иногда",
+  },
 };
 
-export { ResumeOptions };
+export { ResumeOptions, months, getOptionsValue };
 
 export interface iUserResume {
   userName: string;
@@ -63,8 +84,8 @@ export interface iUserResume {
   dob: number;
   contact: Array<{ id: number | string; name: string; value: string; type: string; preferred?: boolean | null }>;
   city: string | null;
-  move: boolean | null;
-  bTrip: boolean | null;
+  move: string;
+  bTrip: string;
   position: string;
   specialization: Array<string>;
   salary: number | null;

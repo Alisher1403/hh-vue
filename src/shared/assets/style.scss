@@ -51,6 +51,7 @@
   --font-semiBold-italic: "NotoSans-SemiBold-Italic";
   --font-bold: "NotoSans-Bold";
   --font-bold-italic: "NotoSans-Bold-Italic";
+  --default-margin: 15px;
 }
 
 @mixin text() {
@@ -363,6 +364,10 @@ h6 {
   font-family: var(--font-regular);
 }
 
+.ant-input {
+  padding: 4px 7px;
+}
+
 /*********/
 
 .custom-btn {
@@ -379,4 +384,30 @@ h6 {
 
 .input-subtitle-margin {
   margin-bottom: 5px;
+}
+
+.input-title {
+  font-family: var(--font-medium);
+  line-height: 100%;
+  margin-bottom: 5px;
+}
+
+.margin {
+  margin: var(--default-margin);
+}
+
+.margin-top {
+  margin-top: var(--default-margin);
+}
+
+.margin-bottom {
+  margin-bottom: var(--default-margin);
+}
+
+.margin-x {
+  margin: 0 var(--default-margin);
+}
+
+.margin-y {
+  margin-top: var(--default-margin) 0;
 }

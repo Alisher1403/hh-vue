@@ -4,31 +4,21 @@
       <div class="resume-wrapper">
         <!-- ================ RESUME CONTENT ================= -->
         <div class="resume-content">
-          <!------------------ SECTOR 1 ------------------->
           <InfoSection />
 
-          <!------------------ SECTOR 2 ------------------->
           <ContactSection />
 
-          <!------------------ SECTOR 3 ------------------->
           <TripSection />
-
           <hr class="break" />
 
-          <!------------------ SECTOR 4 ------------------->
           <EmploymentSection />
 
           <hr class="break" />
 
-          <!------------------ SECTOR 5 ------------------->
           <SkillsSection />
 
-          <!------------------ SECTOR 6 ------------------->
           <AboutSection />
-
           <hr class="break" />
-
-          <!------------------ SECTOR 7 ------------------->
 
           <PortfolioSection />
           <hr class="break" />

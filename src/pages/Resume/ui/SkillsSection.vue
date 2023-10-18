@@ -3,28 +3,7 @@
     <div class="content">
       <h2 class="title">Ключевые навыки</h2>
 
-      <ul class="user-skills" v-if="!editing" v-memo="[skills]">
-        <li class="skill" v-for="skill in resume.skills" :key="skill">
-          <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
-          <p class="skill-name text-block">
-            {{ skillsIcons[skill.toLocaleLowerCase()] ? skillsIcons[skill.toLocaleLowerCase()].name : skill }}
-          </p>
-        </li>
-      </ul>
-
-      <!-- EDITING -->
-      <a-select v-if="editing" class="skills-select" style="width: 100%" mode="tags" v-model:value="skills" autofocus v-memo="[skills]">
-        <a-select-option
-          class="user-portfolio-scoped-style"
-          v-for="(_, el) in skillsIcons"
-          :key="el"
-          :value="el.toLocaleLowerCase()"
-          :getPopupContainer="antParentNode"
-        >
-          <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]?.icon"></div>
-          <p class="skill-name text-block">{{ skillsIcons[el.toLocaleLowerCase()]?.name }}</p>
-        </a-select-option>
-      </a-select>
+      <SkillsSelect :value="resume.skills" @setter="(e) => (skills = e)" :open="editing" v-memo="[skills, editing]" />
     </div>
 
     <button class="resume-editor-link" @click="editing = true" v-if="!editing">Редактировать</button>
@@ -34,13 +13,13 @@
       justify-end
       @save="
         () => {
-          resume['skills'] = skills;
+          resume.skills = skills;
           editing = false;
         }
       "
       @cancel="
         () => {
-          skills = resume['skills'].map((el) => el.toLocaleLowerCase());
+          skills = resume.skills.map((el) => el.toLocaleLowerCase());
           editing = false;
         }
       "
@@ -51,12 +30,12 @@
 <script lang="ts">
 import { useStore } from "../../index";
 import { skillsIcons } from "@/shared/assets/icons";
-import { EditorButtons } from "@/shared/UI";
+import { EditorButtons, SkillsSelect } from "@/shared/UI";
 import { defineComponent, ref } from "vue";
 import { antParentNode } from "@/shared/constants";
 
 export default defineComponent({
-  components: { EditorButtons },
+  components: { EditorButtons, SkillsSelect },
   setup() {
     const store = useStore();
     const resume = store.state.resume;

@@ -9,7 +9,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { SearchBar } from "@/shared/UI";
-import "@/database.ts"
 
 export default defineComponent({
     name: 'MainPage',

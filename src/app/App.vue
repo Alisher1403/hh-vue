@@ -10,6 +10,7 @@
 import { defineComponent } from "vue";
 import { SearchBar } from "@/shared/UI";
 import { Navigation } from "@/widgets";
+import "#/index"
 
 export default defineComponent({
   components: {

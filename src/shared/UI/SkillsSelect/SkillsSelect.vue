@@ -3,9 +3,9 @@
     <div v-if="!condition">
       <ul class="user-skills">
         <li class="skill" v-for="skill in list" :key="skill">
-          <div class="skill-icon" v-html="skillsIcons[skill.toLocaleLowerCase()]?.icon"></div>
+          <div class="skill-icon" v-html="skillsIcons[skill]?.icon"></div>
           <p class="skill-name text-block">
-            {{ skillsIcons[skill.toLocaleLowerCase()] ? skillsIcons[skill.toLocaleLowerCase()].name : skill }}
+            {{ skillsIcons[skill] ? skillsIcons[skill].name : skill }}
           </p>
         </li>
       </ul>
@@ -19,9 +19,9 @@
       v-if="condition"
       :getPopupContainer="antParentNode"
     >
-      <a-select-option class="user-portfolio-scoped-style" v-for="(_, el) in skillsIcons" :key="el" :value="el.toLocaleLowerCase()">
-        <div class="skill-icon" v-html="skillsIcons[el.toLocaleLowerCase()]?.icon"></div>
-        <p class="skill-name text-block">{{ skillsIcons[el.toLocaleLowerCase()]?.name }}</p>
+      <a-select-option class="user-portfolio-scoped-style" v-for="(_, el) in skillsIcons" :key="el" :value="el">
+        <div class="skill-icon" v-html="skillsIcons[el]?.icon"></div>
+        <p class="skill-name text-block">{{ skillsIcons[el]?.name }}</p>
       </a-select-option>
     </a-select>
   </div>
@@ -47,7 +47,7 @@ export default defineComponent({
     const data = ref<string[]>(props.value);
 
     watch(data, () => {
-      emit("setter", data);
+      emit("setter", data.value);
     });
 
     const list = computed((): string[] => props.value);

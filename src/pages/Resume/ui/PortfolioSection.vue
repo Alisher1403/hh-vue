@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { useStore } from "../../index";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { icons } from "@/shared/assets/icons";
 
 interface iPortfolio {
@@ -48,10 +48,13 @@ export default defineComponent({
     const checkoutItem = ref<iPortfolio>();
 
     function portfolioDialog(portfolio: iPortfolio): void {
-      document.body.style.overflow = portfolio == null ? "auto" : "hidden";
       checkout.value = true;
       checkoutItem.value = portfolio;
     }
+
+    watch(checkout, (val: boolean) => {
+      document.body.style.overflow = !val ? "auto" : "hidden";
+    });
 
     return { resume, icons, checkout, checkoutItem, portfolioDialog };
   },

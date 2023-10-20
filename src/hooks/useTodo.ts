@@ -9,7 +9,7 @@ export default class UseTodo implements IUseTodo {
     this.array = array;
   }
 
-  public delete(data: any, val: any) {
+  public delete(data: any, val?: any) {
     if (val) {
       this.array = this.array.filter((elem) => elem[data] !== val);
     } else {

@@ -22,7 +22,7 @@
           <div class="description text-block" v-html="checkoutItem.description"></div>
         </div>
       </div>
-      <button v-html="icons.x" class="exit-button" @click.stop="portfolioDialog(null)"></button>
+      <button v-html="icons.x" class="exit-button" @click.stop="checkout = false"></button>
     </div>
 
     <router-link to="" class="resume-editor-link">Редактировать</router-link>

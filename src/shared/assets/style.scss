@@ -24,6 +24,7 @@
 }
 
 :root {
+  --title-size: 22px;
   --paragraph-size: 14px;
   --navigation-link-size: 16px;
   --input-rounded: 5px;
@@ -254,6 +255,13 @@
 /****************************************/
 
 // ? ================================ TITLE AND HEADING STYLES ==================================== ? //
+
+.title {
+  font-family: var(--font-semiBold);
+  color: var(--title-color);
+  margin-bottom: 20px;
+  font-size: var(--title-size);
+}
 
 p,
 h1,

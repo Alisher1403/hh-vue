@@ -12,23 +12,23 @@ const months: any = {
   eng: ["January", "February", "March", "April", "May", "June", "July", "Augues", "September", "October", "November", "December"],
 };
 
-const getOptionsValue = {
+const getOptionsValue: any = {
   move: {
     impossible: "Не готов к переезду",
     possible: "Готов к переезду",
     desirable: "Желательный переезд",
-  },
+  } as any,
   bTrip: {
     never: "Не готов к командировкам",
     ready: "Готов к командировкам",
     sometimes: "Иногда готов к командировкам",
-  },
+  } as any,
   currencies: {
     usd: "$",
     sum: "сум",
     rub: "₽",
     eur: "€",
-  },
+  } as any,
 };
 
 const ResumeOptions: any = {
@@ -38,14 +38,14 @@ const ResumeOptions: any = {
     project: "Проектная работа",
     volunteer: "Волонтерство",
     probation: "Стажировка",
-  },
+  } as any,
   schedule: {
     full: "Полный день",
     shift: "Сменный график",
     flexible: "Гибкий график",
     remote: "Удаленная работа",
     fly: "Вахтовый метод",
-  },
+  } as any,
   educationDegree: {
     secondary: "Среднее",
     special_secondary: "Среднее специальное",
@@ -55,7 +55,7 @@ const ResumeOptions: any = {
     master: "Магистр",
     candidate: "Кандидат наук",
     doctor: "Доктор наук",
-  },
+  } as any,
   languagesLevel: {
     a1: "A1 — Начальный",
     a2: "A2 — Элементарный",
@@ -63,12 +63,12 @@ const ResumeOptions: any = {
     b2: "B2 — Средне-продвинутый",
     c1: "C1 — Продвинутый",
     c2: "C2 — В совершенстве",
-  },
+  } as any,
   travel: {
     any: "Не имеет значения",
     1: "Не более часа",
     "1.30": "Не более полутора часов",
-  },
+  } as any,
   move: {
     impossible: "Невозможен",
     possible: "Возможен",
@@ -78,7 +78,7 @@ const ResumeOptions: any = {
     never: "Никогда",
     ready: "Готов",
     sometimes: "Иногда",
-  },
+  } as any,
 };
 
 export { ResumeOptions, months, getOptionsValue };

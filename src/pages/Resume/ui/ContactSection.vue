@@ -29,7 +29,7 @@
         </li>
       </ul>
       <!--  -->
-      <Modal :open="modal" @onClose="modalClose()" :title="'Контакт'">
+      <Modal v-if="modal" :open="modal" @onClose="modalClose()" :title="'Контакт'">
         <div class="modal-content">
           <a-row :gutter="10">
             <a-col flex="100px">

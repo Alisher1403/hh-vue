@@ -125,15 +125,6 @@ export default defineComponent({
     return { icons, months, resume, userName, image, dob, gender, editing, calculatedDob, saveData, cancelData };
   },
 });
-
-// import { iUserResume, months } from "@/app/store/interfaces";
-// import type { PropType } from "vue";
-// const props = defineProps({
-//   data: {
-//     type: Object as PropType<iUserResume>,
-//     required: true,
-//   },
-// });
 </script>
 
 <style scoped lang="scss">
@@ -146,7 +137,7 @@ export default defineComponent({
 
   .left {
     .user-name {
-      font-size: 35px;
+      font-size: calc(var(--title-size) + 5px);
       margin-bottom: 10px;
     }
 

@@ -8,22 +8,7 @@
 
     <button class="resume-editor-link" @click="editing = true" v-if="!editing">Редактировать</button>
 
-    <EditorButtons
-      v-if="editing"
-      justify-end
-      @save="
-        () => {
-          resume.skills = skills;
-          editing = false;
-        }
-      "
-      @cancel="
-        () => {
-          skills = resume.skills.map((el) => el.toLocaleLowerCase());
-          editing = false;
-        }
-      "
-    />
+    <EditorButtons v-if="editing" justify-end @save="saveData()" @cancel="cancelData()" />
   </div>
 </template>
 
@@ -44,7 +29,17 @@ export default defineComponent({
 
     const skills = ref<string[]>(resume.skills);
 
-    return { resume, editing, skills, skillsIcons, antParentNode };
+    function saveData() {
+      resume.skills = skills.value;
+      editing.value = false;
+    }
+
+    function cancelData() {
+      skills.value = resume.skills;
+      editing.value = false;
+    }
+
+    return { resume, editing, skills, skillsIcons, antParentNode, saveData, cancelData };
   },
 });
 </script>
@@ -55,132 +50,5 @@ export default defineComponent({
 
 .resume-sector-5 {
   padding: 20px auto;
-
-  $skills-gap: 8px;
-  $skills-list-padding: 7px 0;
-  $skills-icon-size: 40px;
-
-  .content {
-    @mixin skill-block {
-      @include list-block-style();
-      display: flex;
-      align-items: center;
-      padding: 0;
-      column-gap: 2px;
-      border-radius: 40px;
-      padding: 0px 10px;
-      overflow: hidden;
-      height: $skills-height;
-
-      .skill-name {
-        line-height: 100%;
-        margin-bottom: 0;
-      }
-
-      .skill-icon {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: -2px;
-
-        svg {
-          height: 70%;
-          aspect-ratio: 1/1;
-          object-fit: contain;
-          display: flex;
-          justify-content: center;
-        }
-      }
-    }
-
-    .skill-icon {
-      height: $skills-icon-size;
-    }
-
-    .user-skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: $skills-gap;
-      padding: $skills-list-padding;
-      border: 0.5px solid transparent;
-      border-right: none;
-      border-left: none;
-      margin: 0;
-
-      .skill {
-        @include skill-block();
-      }
-    }
-
-    .skills-select {
-      .ant-select-selector {
-        padding: $skills-list-padding;
-        border-radius: 0 !important;
-        border-right: none;
-        border-left: none;
-        box-shadow: none;
-        box-sizing: content-box;
-      }
-
-      .ant-select-selection-overflow {
-        display: flex;
-        gap: $skills-gap;
-
-        * {
-          margin: 0;
-          padding: 0;
-        }
-      }
-
-      .ant-select-selection-item {
-        height: auto;
-        background: transparent;
-        border: none;
-        padding: 0;
-
-        .ant-select-selection-item-content {
-          @include skill-block();
-        }
-
-        .ant-select-selection-item-remove {
-          position: absolute;
-          right: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          top: 0;
-          background: rgb(240, 75, 75);
-          border-radius: 50%;
-          height: 12px;
-          aspect-ratio: 1/1;
-          animation: x-appear 0.2s forwards;
-          opacity: 0;
-
-          @keyframes x-appear {
-            100% {
-              opacity: 1;
-            }
-          }
-
-          span {
-            height: 60%;
-            aspect-ratio: 1/1;
-
-            svg {
-              height: 100%;
-              width: 100%;
-              fill: white;
-            }
-          }
-        }
-
-        .anticon-close {
-          vertical-align: 0;
-          line-height: 0;
-        }
-      }
-    }
-  }
 }
 </style>

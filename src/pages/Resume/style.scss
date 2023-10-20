@@ -3,7 +3,6 @@
 /************************************************************/
 $break-width: 0.5px;
 $break-point-size: 5px;
-$skills-height: 40px;
 
 .resume-editor-link {
   @include link-style();
@@ -83,13 +82,6 @@ $skills-height: 40px;
   padding-right: 20px;
 }
 
-.title {
-  font-family: var(--font-semiBold);
-  color: var(--title-color);
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
 .break {
   border: none;
   height: $break-width;
@@ -119,35 +111,6 @@ $skills-height: 40px;
 
 .text-block {
   @include text();
-}
-
-.user-portfolio-scoped-style {
-  padding: 5px 5px !important;
-
-  .ant-select-item-option-content {
-    display: grid;
-    grid-template-columns: $skills-height auto;
-    align-items: center;
-
-    * {
-      margin: 0;
-      padding: 0;
-    }
-
-    .skill-icon {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: calc($skills-height - 10px);
-    }
-  }
-
-  .ant-select-item-option-state {
-    display: flex;
-    margin-right: 5px;
-    justify-content: center;
-    align-items: center;
-  }
 }
 
 /************************************************************/
@@ -180,171 +143,6 @@ $skills-height: 40px;
             left: 0;
             right: auto;
             transform: translate(calc(-100% - $break-width), $break-width);
-          }
-        }
-      }
-
-      .resume-sector-7 {
-        padding: 20px auto;
-
-        .user-portfolio-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-
-          .user-portfolio {
-            height: 200px;
-            aspect-ratio: 1/1;
-            cursor: pointer;
-
-            @include media(450px) {
-              height: 150px;
-            }
-
-            @include media(350px) {
-              height: 130px;
-            }
-
-            .content {
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: space-between;
-              position: relative;
-              overflow: hidden;
-              padding: 7px;
-
-              .portfolio-image {
-                height: 100%;
-                width: 100%;
-                object-fit: contain;
-              }
-
-              .portfolio-bg {
-                object-fit: cover;
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                width: 100%;
-                z-index: -1;
-                filter: blur(20px) saturate(2);
-              }
-
-              .portfolio-name {
-                white-space: nowrap;
-                width: 100%;
-                @include text();
-              }
-            }
-          }
-        }
-
-        .portfolio-dialog {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          padding: 30px;
-          justify-content: center;
-          align-items: center;
-          background: gray;
-          z-index: 1000;
-          height: 100%;
-          width: 100%;
-          display: none;
-          background: rgba(0, 0, 0, 0.388);
-
-          @include media(550px) {
-            padding: 80px;
-          }
-
-          &[open="true"] {
-            display: flex;
-            opacity: 0;
-            visibility: collapse;
-            animation: open-dialog 0.3s forwards;
-
-            @keyframes open-dialog {
-              100% {
-                opacity: 1;
-                visibility: visible;
-              }
-            }
-          }
-
-          .dialog-content {
-            display: inline-flex;
-            max-height: 70%;
-            width: 100%;
-            max-width: 1000px;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-
-            @include media(550px) {
-              flex-direction: column;
-              align-items: center;
-              max-height: 100%;
-              max-width: auto;
-              width: auto;
-              padding-left: 6px;
-            }
-
-            .dialog-show {
-              overflow-y: scroll;
-              width: 60%;
-              border-right: 0.5px solid var(--border-color);
-
-              @include media(550px) {
-                width: 100%;
-                max-height: 450px;
-                height: 100%;
-                border: none;
-              }
-
-              /* padding-left: 10px; */
-
-              .portfolio-image {
-                object-fit: contain;
-                width: 100%;
-              }
-            }
-
-            .dialog-description {
-              padding: 20px;
-              width: 40%;
-              overflow-y: scroll;
-
-              @include media(550px) {
-                width: 100%;
-                height: 100%;
-                border-top: 0.5px solid var(--border-color);
-              }
-
-              .description {
-                line-height: 160%;
-              }
-            }
-          }
-
-          .exit-button {
-            position: absolute;
-            top: 3vh;
-            height: 40px;
-            right: 3vh;
-            cursor: pointer;
-            @include rm-default();
-
-            @include media(550px) {
-              height: 35px;
-            }
-
-            svg {
-              fill: var(--text-color);
-            }
           }
         }
       }
@@ -669,8 +467,8 @@ $skills-height: 40px;
 }
 
 .ant-select-item-option-content {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .todo-editor {

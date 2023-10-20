@@ -19,7 +19,7 @@
       v-if="condition"
       :getPopupContainer="antParentNode"
     >
-      <a-select-option class="user-portfolio-scoped-style" v-for="(value, key) in skillsIcons" :key="key" :value="el">
+      <a-select-option class="user-portfolio-scoped-style" v-for="(value, key) in skillsIcons" :key="key" :value="key">
         <div class="skill-icon" v-html="value?.icon"></div>
         <p class="skill-name text-block">{{ value?.name }}</p>
       </a-select-option>

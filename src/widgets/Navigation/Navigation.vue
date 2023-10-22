@@ -5,7 +5,7 @@
         <!------------------------------------------ Left ------------------------------------------>
 
         <div class="nav-left">
-          <router-link to="/" class="nav-logo">hh</router-link>
+          <router-link to="/" class="nav-logo">Constant</router-link>
           <!--  -->
           <ul class="nav-links">
             <li class="nav-link-li" v-for="link in navLinks" v-bind:key="link.id">
@@ -146,7 +146,7 @@ $resume-btn: #23a025;
 nav {
   /* background: #222324; */
   background: #f6f8fa;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--border-color);
 
   * {
@@ -162,16 +162,7 @@ nav {
       @include flex(center, center, 30px);
 
       .nav-logo {
-        color: white;
-        background: rgb(211, 0, 0);
-        border-radius: 50%;
-        height: 50px;
-        font-weight: 700;
-        aspect-ratio: 1/1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 30px;
+        font-size: 25px;
       }
 
       .nav-links {

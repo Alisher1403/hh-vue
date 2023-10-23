@@ -9,15 +9,9 @@
         <!--  -->
         <ActiveSeek />
 
-        <ul class="resume-list">
-          <li>
-            <ResumeCard />
-          </li>
-          <li>
-            <ResumeCard />
-          </li>
-          <li>
-            <ResumeCard />
+        <ul class="resume-list" v-if="resumeList">
+          <li v-for="resume in resumeList" :key="resume.id">
+            <ResumeCard :data="resume" />
           </li>
         </ul>
         <!--  -->
@@ -27,14 +21,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { ActiveSeek, ResumeCard } from "@/shared/UI";
+import { computed, defineComponent, onMounted } from "vue";
+import { ActiveSeek, ResumeCard, useStore } from "@/shared/UI";
 
 export default defineComponent({
   name: "ResumePage",
   components: {
     ActiveSeek,
     ResumeCard,
+  },
+  setup() {
+    const store = useStore();
+    const resumeList = computed(() => store.state.resumeList);
+
+    onMounted(() => {
+      store.dispatch("getResumeList");
+    });
+
+    return { resumeList, store };
   },
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="resume-editor">
+  <div class="resume-editor" v-if="resume">
     <div class="container">
       <div class="resume-wrapper">
         <!-- ================ RESUME CONTENT ================= -->
@@ -216,6 +216,7 @@ import { InfoSection, ContactSection, TripSection, EmploymentSection, SkillsSect
 import { antParentNode } from "@/shared/constants";
 import { useStore } from "../index";
 import { interfaces } from "../index";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "Resume",
@@ -232,14 +233,21 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const resume = store.state.resume;
+    const route = useRoute();
+    const resume = store.state.resumeList?.find((e) => e.id === route.params.id)!;
+    store.state.resume = resume;
+
+    if (!resume) {
+      store.dispatch("getResume", route.params.id);
+    }
+
     const { ResumeOptions } = interfaces;
 
     /**
      * ! --------------------------------------- Resume Tools Codes ---------------------------------------- !
      */
 
-    const langOptionsValue = ref<string>(resume.langSelected);
+    const langOptionsValue = ref<string>(resume ? resume.langSelected : "");
     const langOptions = ref<SelectProps["options"]>([
       {
         value: "rus",

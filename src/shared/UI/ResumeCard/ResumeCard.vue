@@ -2,7 +2,7 @@
   <div class="resume-card">
     <div class="content">
       <h2 class="title">
-        <router-link to="/resume-editor/25">{{ resume.title }}</router-link>
+        <router-link :to="`/resume-editor/${resume.id}`">{{ resume?.position }}</router-link>
       </h2>
 
       <p class="updated">
@@ -25,12 +25,12 @@
         <h5 class="stats-title">Статистика за неделю</h5>
         <div class="stats-content">
           <p>
-            <strong>{{ resume.views.length }}&nbsp;</strong>
+            <strong>{{ resumeInfo.views.length }}&nbsp;</strong>
             <router-link to="/">просмотра</router-link>
           </p>
           <span class="divider"></span>
           <p>
-            <strong>{{ resume.invitation.length }}&nbsp;</strong>
+            <strong>{{ resumeInfo.invitation.length }}&nbsp;</strong>
             <router-link to="/">приглашений</router-link>
           </p>
         </div>
@@ -55,28 +55,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { interfaces } from "../index";
 import { useStore } from "../index";
 
+type iResume = interfaces.iResume;
+
 export default defineComponent({
   name: "ResumeCard",
-  setup() {
+  props: {
+    data: Object as PropType<iResume>,
+  },
+  setup(props) {
     const store = useStore();
     const { months } = interfaces;
-    type iResume = interfaces.iResume;
+    const resume = props.data;
 
-    const resume: iResume = {
+    const resumeInfo: iResume = {
       title: "Frontend Developer",
       updated: Date.now().toString(),
       views: ["1", "2", "3"],
       invitation: ["1"],
     };
 
-    const date = new Date(+resume.updated);
+    const date = new Date(+resumeInfo.updated);
 
     return {
       resume,
+      resumeInfo,
       date,
       months,
       store,

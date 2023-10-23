@@ -43,7 +43,10 @@ interface iPortfolio {
 export default defineComponent({
   setup() {
     const store = useStore();
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
+
     const checkout = ref<boolean>(false);
     const checkoutItem = ref<iPortfolio>();
 

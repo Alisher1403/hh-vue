@@ -1,5 +1,5 @@
 <template>
-  <div class="resume-sector-2 sector" v-if="resume.contact">
+  <div class="resume-sector-2 sector">
     <div class="content">
       <h4 class="title">Контакты</h4>
       <ul>
@@ -114,7 +114,9 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
 
     const editing = ref<boolean>(false);
 

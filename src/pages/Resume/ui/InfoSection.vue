@@ -77,7 +77,10 @@ export default defineComponent({
     const { months } = interfaces;
 
     const editing = ref<boolean>(false);
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
+
     const calculatedDob = ref<number>();
 
     const userName = ref<string>(resume.userName);

@@ -23,7 +23,9 @@ export default defineComponent({
   components: { EditorButtons, SkillsSelect },
   setup() {
     const store = useStore();
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
 
     const editing = ref<boolean>(false);
 

@@ -28,7 +28,10 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
+
     const editing = ref<boolean>(false);
 
     const aboutMe = ref<string>(resume.aboutMe);

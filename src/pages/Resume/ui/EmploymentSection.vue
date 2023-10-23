@@ -75,7 +75,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const { getOptionsValue, ResumeOptions } = interfaces;
-    const resume = store.state.resume;
+    const resume = store.state.resume!;
+
+    if (!resume) return;
 
     const editing = ref<boolean>(false);
 

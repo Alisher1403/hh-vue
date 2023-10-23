@@ -84,6 +84,7 @@ const ResumeOptions: any = {
 export { ResumeOptions, months, getOptionsValue };
 
 export interface iUserResume {
+  id: any;
   userName: string;
   gender: "M" | "F" | null;
   img: string;
